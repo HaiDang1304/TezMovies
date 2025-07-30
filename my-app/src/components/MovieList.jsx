@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+ 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
 
@@ -21,7 +24,7 @@ const MovieList = () => {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
       {movies.map((movie) => (
         <div key={movie._id} className="bg-black rounded shadow p-2">
-          <img src={movie.poster_url} alt={movie.name} className="w-full h-64 object-cover rounded" />
+          <img src={movie.poster_url} alt={movie.name} className="w-full max-w-5xl" />
           <h2 className="text-md font-semibold mt-2">{movie.name}</h2>
           <p className="text-sm text-gray-500">{movie.origin_name}</p>
         </div>
