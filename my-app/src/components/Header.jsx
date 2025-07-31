@@ -5,8 +5,11 @@ const Header = () => {
     return (
         <header className="bg-gray-800 text-white px-6 py-4 w-full">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <h1 className="text-2xl font-bold">TezMovies</h1>
-                 <div className="relative">
+                <div className="flex items-center">
+                    <h1 className="text-2xl font-bold">Tez</h1>
+                    <h1 className="text-2xl font-bold text-red-600">Movies</h1>
+                </div>
+                <div className="relative">
                     <input
                         type="text"
                         placeholder="Tìm kiếm..."
