@@ -6,8 +6,11 @@ const Header = () => {
         <header className="bg-gray-800 text-white px-6 py-4 w-full">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center">
-                    <h1 className="text-2xl font-bold">Tez</h1>
-                    <h1 className="text-2xl font-bold text-red-600">Movies</h1>
+                    <a href="/" className="flex items-center space-x-2">
+                        <h1 className="text-2xl font-bold text-white">Tez</h1>
+                        <h1 className="text-2xl font-bold text-red-600">Movies</h1>
+                    </a>
+
                 </div>
                 <div className="relative">
                     <input

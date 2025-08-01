@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MovieList from "./components/MovieList";
 import Header from "./components/Header";
 import WatchMovie from "./pages/WatchMovie";
-import MovieDetail from "./components/MovieDetail";
+import MovieDetail from "./pages/MovieDetail";
 import CategoryList from "./components/CategoryList";
 import CategoryDetail from "./pages/CategoryDetail";
 
@@ -16,13 +16,22 @@ const App = () => {
         </div>
 
         <Routes>
-          <Route path="/" element={
-            <>
-              <MovieList />
-              <CategoryList />
-            </>
-          } />
-          <Route path="/phim/:slug" element={<WatchMovie />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <MovieList />
+                <CategoryList />
+              </>
+            }
+          />
+          {/* ✅ Trang chi tiết phim */}
+          <Route path="/phim/:slug" element={<MovieDetail />} />
+
+          {/* ✅ Trang xem phim */}
+          <Route path="/xem-phim/:slug" element={<WatchMovie />} />
+
+          {/* ✅ Trang thể loại */}
           <Route path="/the-loai/:slug" element={<CategoryDetail />} />
         </Routes>
       </div>

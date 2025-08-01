@@ -21,7 +21,7 @@ const CategoryDetail = () => {
         const data = res.data.data;
         setMovies(data.items || []);
         // Kiểm tra trường totalPages hoặc số lượng phim tổng cộng
-        setTotalPages(data.pagination?.totalPages || data.total || 1);
+        setTotalPages(data.totalPages || Math.ceil(data.total || 1 )/ data.pagination?.limit || 20);
         setLoading(false);
       })
       .catch((err) => {
