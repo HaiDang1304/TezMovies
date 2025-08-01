@@ -53,7 +53,7 @@ const MovieList = () => {
                     alt={movie.name}
                     className="w-full h-72 object-cover transfrom group-hover:scale-105 group-hover:brightness-110 transition-all duration-300"
                   />
-                </div>
+                </div>  
                 <div className="p-3">
                   <h2 className="text-base font-semibold line-clamp-1 group-hover:text-yellow-400 transition">{movie.name}</h2>
                   <p className="text-sm text-gray-400 line-clamp-1">{movie.origin_name}</p>
