@@ -22,8 +22,9 @@ const MovieDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-6 m-auto">
-      <h1 className="text-3xl font-bold mb-4">{movie.name}</h1>
+      
       <img src={movie.thumb_url} alt={movie.name} className="w-full max-w-sm rounded-lg" />
+      <h1 className="text-3xl font-bold mb-4">{movie.name}</h1>
       <p className="mt-4 text-gray-300">{movie.content}</p>
 
       <button
