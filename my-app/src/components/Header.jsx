@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 const Header = () => {
     return (
-        <header className="bg-gray-800 text-white px-6 py-4 w-full">
+        <header className="fixed top-0 left-0 w-full z-50 bg-black/20 backdrop-blur-md text-white px-3 py-3">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center">
                     <a href="/" className="flex items-center space-x-2">
-                        <h1 className="text-2xl font-bold text-white">Tez</h1>
-                        <h1 className="text-2xl font-bold text-red-600">Movies</h1>
+                        <h2 className="text-3xl font-bold text-white">Tez</h2>
+                        <h2 className="text-3xl font-bold text-red-600">Movies</h2>
                     </a>
 
                 </div>
@@ -24,11 +24,11 @@ const Header = () => {
                     />
                 </div>
                 <nav>
-                    <ul className="flex space-x-6 text-lg font-medium">
-                        <li><a href="#" className="hover:underline">Chủ đề</a></li>
-                        <li><a href="#" className="hover:underline">Thể Loại</a></li>
-                        <li><a href="#" className="hover:underline">Phim Mới</a></li>
-                        <li><a href="#" className="hover:underline">Phim Hot</a></li>
+                    <ul className="flex space-x-6 text-lg font-medium ">
+                        <li><a href="#" className="hover:underline !text-white">Chủ đề</a></li>
+                        <li><a href="#" className="hover:underline !text-white">Thể Loại</a></li>
+                        <li><a href="#" className="hover:underline !text-white">Phim Mới</a></li>
+                        <li><a href="#" className="hover:underline !text-white">Phim Hot</a></li>
                     </ul>
                 </nav>
                 <div className="flex items-center space-x-4">

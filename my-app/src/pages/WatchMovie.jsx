@@ -2,6 +2,8 @@ import { useParams, useLocation } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 const API_KEY = "8afc137d2cb21415981fb4af3b88e9e5";
+import MovieInfo from "../components/MovieInfo";
+
 
 
 
@@ -100,47 +102,10 @@ const WatchMovie = () => {
       ) : (
         <p>Không có video.</p>
       )}
-      <div className="flex gap-15 mb-5 mt-6">
+      <div className="flex flex-3/5 gap-15 mb-5 mt-6">
         {/* Thông tin thêm */}
         <div>
-          <div className="flex items-start gap-4 mb-6">
-            <img
-              src={movie.poster_url}
-              alt={movie.name}
-              className="w-full max-w-45 rounded-lg"
-            />
-            <div className="text-sm text-gray-400">
-              <h2 className="text-2xl font-bold mb-2">{movie.name}</h2>
-              <p><strong>Quốc gia:</strong> {movie.country?.name}</p>
-              <p><strong>Thời lượng:</strong> {movie.time}</p>
-              <p><strong>Đạo diễn:</strong> {movie.director}</p>
-              <p><strong>Diễn viên:</strong> {movie.actor}</p>
-              <p><strong>Thể loại:</strong> {
-                Array.isArray(movie.category)
-                  ? movie.category.map(c => c.name).join(", ")
-                  : movie.category?.name || "Đang cập nhật"
-              }</p>
-
-              <p><strong>Năm phát hành: </strong> {
-                Array.isArray(movie.year)
-                  ? movie.year.map(y => y.date || y).join(", ")
-                  : movie.year || "Đang cập nhật"
-              }</p>
-
-
-              <p><strong>Đánh giá:</strong> {movie.vote_average}</p>
-              <p><strong>Lượt xem:</strong> {movie.view}</p>
-              <p><strong>Trạng thái:</strong> {{
-                completed: "Đã hoàn thành",
-                ongoing: "Đang phát sóng",
-                upcoming: "Sắp ra mắt",
-                cancelled: "Đã hủy"
-              }[movie.status] || "Đang cập nhật"
-              }</p>
-            </div>
-
-
-          </div>
+         <MovieInfo movie={movie} />
           {/* Danh sách tập */}
 
           <h2 className="text-l mb-2 font-semibold">Danh sách tập</h2>
