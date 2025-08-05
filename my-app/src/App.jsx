@@ -6,6 +6,7 @@ import WatchMovie from "./pages/WatchMovie";
 import MovieDetail from "./pages/MovieDetail";
 import CategoryList from "./components/CategoryList";
 import CategoryDetail from "./pages/CategoryDetail";
+import SearchPage  from "./components/SearchPage";
 
 const App = () => {
   return (
@@ -33,6 +34,9 @@ const App = () => {
 
           {/* ✅ Trang thể loại */}
           <Route path="/the-loai/:slug" element={<CategoryDetail />} />
+          <Route path="/search" element={<SearchPage />} />
+          
+
         </Routes>
       </div>
     </Router>

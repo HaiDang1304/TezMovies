@@ -44,19 +44,22 @@ const MovieList = () => {
             <SwiperSlide key={movie._id}>
               <Link to={`/phim/${movie.slug}`}>
                 <div className="bg-gray-800 rounded-xl overflow-hidden shadow hover:shadow-xl transition duration-300 group">
-                  <div className="overflow-hidden relative h-0 pb-[150%]">
-                    <img
-                      src={movie.poster_url}
-                      alt={movie.name}
-                      className=" absolute inset-0 object-cover transform group-hover:scale-105 group-hover:brightness-110 transition duration-300"
-                    />
+                  <div>
+                    <div className="overflow-hidden relative h-0 pb-[150%]">
+                      <img
+                        src={movie.poster_url}
+                        alt={movie.name}
+                        className=" absolute inset-0 object-cover transform group-hover:scale-105 group-hover:brightness-110 transition duration-300"
+                      />
+                    </div>
+                    <div className="p-3">
+                      <h3 className="text-white text-base font-semibold line-clamp-1 group-hover:text-yellow-400 transition">
+                        {movie.name}
+                      </h3>
+                      <p className="text-sm text-gray-400 line-clamp-1">{movie.origin_name}</p>
+                    </div>
                   </div>
-                  <div className="p-3">
-                    <h3 className="text-white text-base font-semibold line-clamp-1 group-hover:text-yellow-400 transition">
-                      {movie.name}
-                    </h3>
-                    <p className="text-sm text-gray-400 line-clamp-1">{movie.origin_name}</p>
-                  </div>
+
                 </div>
               </Link>
             </SwiperSlide>

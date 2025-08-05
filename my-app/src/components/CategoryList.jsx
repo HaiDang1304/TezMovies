@@ -12,7 +12,7 @@ const CategoryList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white px-6 py-6 m-auto">
+    <div className="min-h-screen bg-gray-900 text-white px-6 py-6 m-auto ">
       <h2 className="text-2xl text-white font-bold max-w-7xl mx-auto px-4 mb-4">Bạn đang quan tâm gì?</h2>
       <div className="grid lg:grid-cols-7 md:grid-cols-4 grid-cols-2 gap-4 mx-auto max-w-7xl  ">
         {categories.slice(0, 8).map((category, idx) => (

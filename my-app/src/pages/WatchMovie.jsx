@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 const API_KEY = "8afc137d2cb21415981fb4af3b88e9e5";
@@ -10,12 +10,14 @@ import MovieInfo from "../components/MovieInfo";
 const WatchMovie = () => {
   const { slug } = useParams();
   const location = useLocation();
-  const search = new URLSearchParams(location.search);
+  const searchParams = new URLSearchParams(location.search);
+  const ep = searchParams.get("ep");
   const [movieData, setMovieData] = useState(null);
   const [currentEpisode, setCurrentEpisode] = useState(null);
   const [credits, setCredits] = useState([]);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [tmdbActors, setTmdbActors] = useState([]);
+
   {/* Group tập phim theo 10 tập 1 group*/ }
   const episodeList = movieData?.episodes?.[0]?.server_data || [];
   // Tính groupSize một lần (trước useMemo)
@@ -38,8 +40,15 @@ const WatchMovie = () => {
         const data = res.data;
         setMovieData(data);
 
-        const defaultEpisode = data.episodes?.[0]?.server_data?.[0];
-        setCurrentEpisode(defaultEpisode);
+        const episodeList = data.episodes?.[0]?.server_data || []
+        const selectedEpisode = episodeList.find(e => e.name === ep);
+        setCurrentEpisode(selectedEpisode || episodeList[0])
+
+        if (selectedEpisode) {
+          const index = episodeList.findIndex(e => e.name === selectedEpisode.name);
+          const groupIndex = Math.floor(index / groupSize);
+          setCurrentGroupIndex(groupIndex);
+        }
 
         // 2. Lấy ID và type từ URL (vd: ?type=movie&id=12345)
         const tmdbId = data.movie?.tmdb?.id;
@@ -105,7 +114,7 @@ const WatchMovie = () => {
       <div className="flex flex-3/5 gap-15 mb-5 mt-6">
         {/* Thông tin thêm */}
         <div>
-         <MovieInfo movie={movie} />
+          <MovieInfo movie={movie} />
           {/* Danh sách tập */}
 
           <h2 className="text-l mb-2 font-semibold">Danh sách tập</h2>
@@ -136,8 +145,8 @@ const WatchMovie = () => {
                 key={index}
                 onClick={() => setCurrentEpisode(ep)}
                 className={`px-3 py-1 border rounded text-sm bg-gray-500 ${currentEpisode?.name === ep.name
-                    ? "!bg-yellow-800 text-white font-bold"
-                    : "bg-gray-300 text-white hover:bg-yellow-400"
+                  ? "!bg-yellow-800 text-white font-bold"
+                  : "bg-gray-300 text-white hover:bg-yellow-400"
                   }`}
               >
                 {ep.name}

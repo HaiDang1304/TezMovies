@@ -9,12 +9,15 @@ import Loading from "../components/Loading";
 const MovieDetail = () => {
   const { slug } = useParams();
   const [movie, setMovie] = useState(null);
-  const [episodeList, setEpisodeList] =useState([]);
+  const [episodeList, setEpisodeList] = useState([]);
   const navigate = useNavigate();
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [currentEpisode, setCurrentEpisode] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const handleWatchEpisode = (ep) => {
+    navigate(`/xem-phim/${slug}?ep=${encodeURIComponent(ep.name)}`);
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -23,7 +26,7 @@ const MovieDetail = () => {
         const res = await axios.get(`https://phimapi.com/phim/${slug}`)
         setMovie(res.data.movie);
         setEpisodeList(res.data.episodes)
-        console.log ("movie", res.data.movie);
+        console.log("movie", res.data.movie);
       } catch (error) {
         setMovie(null)
       } finally { setLoading(false) }
@@ -40,37 +43,41 @@ const MovieDetail = () => {
     getData()
   }, [slug]);
 
- const groupSize = episodeList[0]?.server_data?.length > 100 ? 100 : 10;
+  const groupSize = episodeList[0]?.server_data?.length > 100 ? 100 : 10;
 
-const groupedEpisodes = useMemo(() => {
-  if (!episodeList || episodeList.length === 0) return [];
-  const serverData = episodeList[0]?.server_data || [];
-  const result = [];
+  const groupedEpisodes = useMemo(() => {
+    if (!episodeList || episodeList.length === 0) return [];
+    const serverData = episodeList[0]?.server_data || [];
+    const result = [];
 
-  for (let i = 0; i < serverData.length; i += groupSize) {
-    result.push(serverData.slice(i, i + groupSize));
-  }
+    for (let i = 0; i < serverData.length; i += groupSize) {
+      result.push(serverData.slice(i, i + groupSize));
+    }
 
-  return result;
-}, [episodeList, groupSize]);
+    return result;
+  }, [episodeList, groupSize]);
 
-  console.log("episodeList:",episodeList);
-  if (loading) return <Loading/>;
-  if (!loading && !movie) return null; 
+  console.log("episodeList:", episodeList);
+  if (loading) return <Loading />;
+  if (!loading && !movie) return null;
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white m-auto overflow">
-      <div className="relative bg-gradient-to-b from-gray-500 to-gray-500">
+    <div className=" bg-gray-600 text-white">
+      <div className="relative bg-[#242424] min-h-screen">
         <div className="">
           <div className="relative ">
-            <img src={movie?.thumb_url} alt={movie?.name} className="min-w-full " style={{ filter: 'grayscale(70%)' }} />
-            <div className="bg-gradient-to-t h-1/2 absolute z-[1] bottom-0 from-[#191b24] inset-x-0 to-transparent pointer-events-none css-0">
+            <div className=" relative lg:pt-[32%] md:pt-[46%] sm:pt-[50%] pt-[60%]">
+              <img src={movie?.thumb_url} alt={movie?.name} className="absolute inset-0 w-full h-full object-cover block " style={{ filter: 'grayscale(70%)' }} />
+              <div className="bg-gradient-to-t h-1/2 absolute z-[1] bottom-0 from-[#242424] inset-x-0 to-transparent pointer-events-none css-0">
+              </div>
             </div>
+
+
           </div>
-          <div className="absolute -bottom-20 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent z-5">
+          <div className="mt-[-150px] bg-gradient-to-t from-gray-600 to-transparent z-5 relative">
             <div className="grid grid-cols-12 gap-5 py-6 px-6 min-w-full ">
-              <div className="bg-gradient-to-b from-gray-600 to-gray-transparent rounded-2xl lg:col-span-7 col-span-12">
-                <div className="px-3 py-3 ">
+              <div className="bg-gradient-to-b lg:from-gray-600 to-gray-transparent rounded-2xl lg:col-span-7 col-span-12">
+                <div className="px-3 py-3 flex flex-col lg:justify-center justify-center">
                   <MovieInfo movie={movie} />
                   <h2 className="text-xl font-bold mb-4">Giới thiệu: </h2>
                   <p className="text-sm text-gray-300 gap-4">{movie?.content}</p>
@@ -110,7 +117,7 @@ const groupedEpisodes = useMemo(() => {
                         {groupedEpisodes[currentGroupIndex]?.map((ep, index) => (
                           <button
                             key={index}
-                            onClick={() => setCurrentEpisode(ep)}
+                            onClick={() => handleWatchEpisode(ep)}
                             className={`px-3 py-1 border rounded text-sm ${currentEpisode?.name === ep.name
                               ? "!bg-yellow-800 text-white font-bold"
                               : "bg-gray-300 text-white hover:bg-yellow-400"

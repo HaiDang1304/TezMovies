@@ -9,7 +9,7 @@ const MovieInfo = ({ movie }) => {
     };
 
     return (
-        <div className="flex items-start gap-4 mb-6 w-2xl">
+        <div className="flex items-center lg:flex-row flex-col gap-4 mb-6 lg:items-start  ">
             <img
                 src={movie?.poster_url}
                 alt={movie?.name}
@@ -20,7 +20,15 @@ const MovieInfo = ({ movie }) => {
                 <p><strong>Quốc gia:</strong> {movie?.country?.name}</p>
                 <p><strong>Thời lượng:</strong> {movie?.time}</p>
                 <p><strong>Đạo diễn:</strong> {movie?.director}</p>
-                <p><strong>Diễn viên:</strong> {movie?.actor}</p>
+                <div><strong>Diễn viên:</strong>
+                    <div className="flex flex-wrap ">
+                        {
+                            movie.actor?.map((c, index) => (
+                                <span key={index}>{c}{index < movie.actor.length - 1 ? ", " : ""}</span>
+                            ))
+                        }
+                    </div>
+                </div>
                 <p><strong>Thể loại:</strong> {
                     Array.isArray(movie?.category)
                         ? movie?.category.map(c => c.name).join(", ")
