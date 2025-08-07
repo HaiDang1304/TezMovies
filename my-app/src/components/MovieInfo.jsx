@@ -16,9 +16,8 @@ const MovieInfo = ({ movie }) => {
                 className="w-full max-w-45 rounded-lg"
             />
             <div className="text-sm text-gray-400">
-                <h2 className="text-2xl font-bold mb-2">{movie?.name}</h2>
+                <h2 className="lg:text-2xl text-xl font-bold mb-2 ">{movie?.name}</h2>
                 <p><strong>Quốc gia:</strong> {movie?.country?.name}</p>
-                <p><strong>Thời lượng:</strong> {movie?.time}</p>
                 <p><strong>Đạo diễn:</strong> {movie?.director}</p>
                 <div><strong>Diễn viên:</strong>
                     <div className="flex flex-wrap ">
@@ -40,9 +39,6 @@ const MovieInfo = ({ movie }) => {
                         ? movie?.year.map(y => y.date || y).join(", ")
                         : movie?.year || "Đang cập nhật"
                 }</p>
-
-                <p><strong>Đánh giá:</strong> {movie?.vote_average}</p>
-                <p><strong>Lượt xem:</strong> {movie?.view}</p>
                 <p><strong>Trạng thái:</strong> {statusMap[movie?.status] || "Đang cập nhật"}</p>
             </div>
         </div>

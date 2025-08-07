@@ -6,7 +6,7 @@ import WatchMovie from "./pages/WatchMovie";
 import MovieDetail from "./pages/MovieDetail";
 import CategoryList from "./components/CategoryList";
 import CategoryDetail from "./pages/CategoryDetail";
-import SearchPage  from "./components/SearchPage";
+import SearchPage  from "./pages/SearchPage";
 
 const App = () => {
   return (
@@ -28,6 +28,7 @@ const App = () => {
           />
           {/* ✅ Trang chi tiết phim */}
           <Route path="/phim/:slug" element={<MovieDetail />} />
+
 
           {/* ✅ Trang xem phim */}
           <Route path="/xem-phim/:slug" element={<WatchMovie />} />

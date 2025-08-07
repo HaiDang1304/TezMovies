@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { searchMovies } from "../api";
+import { Navigate } from "react-router-dom";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate ();
+  const handleClick = (slug) => {
+    navigate (`/phim/${slug}`);
+  }
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!keyword) return;
@@ -24,7 +28,7 @@ const SearchPage = () => {
   }, [keyword]);
 
   return (
-    <div className="max-w-[1600px] mx-auto min-h-scree text-white px-4 sm:px-6 lg:px-20 py-10">
+    <div className="max-w-[1600px] mx-auto min-h-screen text-white px-4 sm:px-6 lg:px-20 py-10">
       <div className="mt-10">
         <h2 className="!text-2xl md:text-2xl font-bold mb-4">
           Kết quả cho: "<span className="text-yellow-400">{keyword}</span>"

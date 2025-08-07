@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Link } from "react-router-dom";
+import Image from "./Image";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -46,10 +47,11 @@ const MovieList = () => {
                 <div className="bg-gray-800 rounded-xl overflow-hidden shadow hover:shadow-xl transition duration-300 group">
                   <div>
                     <div className="overflow-hidden relative h-0 pb-[150%]">
-                      <img
+                      <Image
+                        rounded="none"
                         src={movie.poster_url}
                         alt={movie.name}
-                        className=" absolute inset-0 object-cover transform group-hover:scale-105 group-hover:brightness-110 transition duration-300"
+                        className=" transform group-hover:scale-105 group-hover:brightness-110 transition duration-300"
                       />
                     </div>
                     <div className="p-3">
