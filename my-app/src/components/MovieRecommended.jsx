@@ -1,7 +1,6 @@
 import { use, useEffect, useState } from "react";
 import { getRandomItem } from "../utils/random-movie-suggestion";
 import { categories, countries } from "../constants/movie";
-import { fetchRecommendedMovies } from "../utils/fetchRecommendedMovies";
 import { movieRecommended } from "../utils/fetchMovieRecommended";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";

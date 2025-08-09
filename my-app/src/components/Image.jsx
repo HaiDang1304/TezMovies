@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react"
 import Loading from "./Loading"
 
-const Image = ({ orientation = "vertical", rounded = "2xl",className =" " ,...props }) => {
+const Image = ({ orientation = "vertical", rounded = "2xl", className = " ", ...props }) => {
 
     const [statusImg, setStatusImg] = useState("loading")
 
-    const pbValue = orientation === "vertical" ? "pb-[150%]" : "pb-[62%]"
+    const pbValue =
+        orientation === "vertical"
+            ? "pb-[150%]" // dọc
+            : orientation === "horizontal"
+                ? "pb-[56.25%]" // ngang (16:9)
+                : "pb-[62%]"; // mặc định
+
     const roundeds = {
-        "none" :"rounded-none",
+        "none": "rounded-none",
         "sm": " rounded-sm",
         "md": " rounded-md",
         "lg": "rounded-lg",
@@ -41,7 +47,7 @@ const Image = ({ orientation = "vertical", rounded = "2xl",className =" " ,...pr
 
 
     return (<div className={`relative ${pbValue}`}>
-        <img {...props} src={getImgSrc(statusImg)} loading="lazy" className={`absolute inset-0 w-full h-full object-cover block ${roundeds[rounded]} ${className?className: ""}`} />
+        <img {...props} src={getImgSrc(statusImg)} loading="lazy" className={`absolute inset-0 w-full h-full object-cover block ${roundeds[rounded]} ${className ? className : ""}`} />
 
     </div>);
 }

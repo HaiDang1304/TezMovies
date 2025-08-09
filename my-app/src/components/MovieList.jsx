@@ -22,13 +22,12 @@ const MovieList = () => {
   }, []);
 
   return (
-    <div className="bg-gray-900 py-8 w-full">
-      <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="bg-gray-900 py-4 w-full">
+      <div className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-bold text-white mb-6">🎬 Phim mới cập nhật</h2>
 
         <Swiper
           modules={[Autoplay, Pagination]}
-          pagination={{ dynamicBullets: true, clickable: true }}
           autoplay={{ delay: 2500 }}
           spaceBetween={16}
           loop={true}
@@ -39,7 +38,7 @@ const MovieList = () => {
             1024: { slidesPerView: 5 },
             1280: { slidesPerView: 6 },
           }}
-          className="w-full"
+          className="w-full "
         >
           {movies.map((movie) => (
             <SwiperSlide key={movie._id}>

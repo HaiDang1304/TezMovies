@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { searchMovies } from "../api";
 import { Navigate } from "react-router-dom";
+import Loading from "../components/Loading";
+import Image from "../components/Image";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate ();
+  const navigate = useNavigate();
   const handleClick = (slug) => {
-    navigate (`/phim/${slug}`);
+    navigate(`/phim/${slug}`);
   }
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -35,44 +37,55 @@ const SearchPage = () => {
         </h2>
 
         {loading ? (
-          <p className="text-center text-lg">Đang tải...</p>
+          <Loading />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-5">
             {movies.map((movie, index) => (
               <div key={index} className="bg-gray-800 text-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group">
                 <div className="overflow-hidden">
                   <div key={movie._id}
                     className="bg-gray-800 text-white rounded-lg cursor-pointer hover:opacity-80 transition"
                     onClick={() => handleClick(movie.slug)}>
-                    <div className="w-full h-95 object-cover transition-all duration-300">
-                      <img
+                    <div className="relative transition-all duration-300">
+                      {/* Poster phim */}
+                      <Image
+                        rounded="none"
                         src={`https://img.phimapi.com/${movie.poster_url}`}
                         alt={movie.name}
-                        className="w-full h-72 object-cover transfrom group-hover:scale-105 group-hover:brightness-110 transition-all duration-300"
+                        className="transform group-hover:scale-105 group-hover:brightness-110 transition-all duration-300"
                       />
-                      <div className="ml-4 mt-5">
-                        <h2 className="group-hover:text-yellow-400 mt-2 overflow-hidden truncate whitespace-nowrap" >{movie?.name ? movie.name.replace(/<[^>]+>/g, "") : "Không tên"}</h2>
-                        <div className="flex text-sm text-gray-400">
-                          <p>{movie.time}</p>
-                          <div className="bg-indigo-400 text-white px-1 py-1 rounded ml-20">
-                            <p>{movie.quality}</p>
-                          </div>
 
-                        </div>
+                      {/* Badge góc trên trái */}
+                      <div className="absolute top-2 left-2 hidden lg:flex flex-wrap gap-1">
+                        <span className="bg-black text-white text-xs  font-medium px-1 py-0.5 rounded">{movie.quality}</span>
+                        <span className="bg-white text-black text-xs font-medium px-1 py-0.5 rounded">{movie.lang}</span>
                       </div>
 
+                      {/* Badge tập phim (góc dưới giữa) */}
+                      <div className="absolute bottom-2 flex w-full items-center justify-center text-center">
+                        <span className="bg-gradient-to-r from-yellow-400 via-yellow300 to-yellow-200 text-black text-xs font-medium px-2 py-0.5 rounded">
+                          {movie.episode_current}
+                        </span>
+                      </div>
                     </div>
+
+                    {/* Tên phim */}
+                    <h2 className="group-hover:text-yellow-400 overflow-hidden truncate whitespace-nowrap px-2 py-2">
+                      {movie?.name ? movie.name.replace(/<[^>]+>/g, "") : "Không tên"}
+                    </h2>
+
                   </div>
-
-
                 </div>
+
+
               </div>
+
             ))}
           </div>
         )}
       </div>
 
-    </div>
+    </div >
   );
 };
 

@@ -5,7 +5,7 @@ import MovieInfo from "../components/MovieInfo";
 import Loading from "../components/Loading";
 import TabMenuMovieDetail from "../components/TabMenuMovieDetail"
 import { fetchTmdbActors } from "../utils/fetchTmdbActors";
-import { fetchRecommendedMovies } from "../utils/fetchRecommendedMovies";
+
 import { movieRecommended } from "../utils/fetchMovieRecommended";
 import MoviesRecommended from "../components/MovieRecommended";
 import Image from "../components/Image";

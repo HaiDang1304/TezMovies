@@ -1,10 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const colors = [
-  "bg-blue-500", "bg-purple-400", "bg-green-500",
-  "bg-indigo-400", "bg-orange-400", "bg-red-400", "bg-gray-700"
+const gradients = [
+  "linear-gradient(135deg, #ff0080, #ff8c00)", // hồng → cam
+  "linear-gradient(135deg, #00f5a0, #00d9f5)", // xanh neon
+  "linear-gradient(135deg, #8a2be2, #ff00ff)", // tím → hồng neon
+  "linear-gradient(135deg, #ff4e50, #f9d423)", // đỏ → vàng
+  "linear-gradient(135deg, #00c6ff, #0072ff)", // xanh đậm → xanh nhạt
+  "linear-gradient(135deg, #f953c6, #b91d73)", // hồng đậm → tím
+  "linear-gradient(135deg, #ff9966, #ff5e62)"  // cam → đỏ
 ];
+
+
 const displayNames = {
   "hanh-dong": "Hành Động",
   "mien-tay": "Miền Viễn Tây",
@@ -26,7 +33,8 @@ const CategoryCard = ({ category, index }) => {
 
   return (
     <div
-      className={`rounded-lg text-white p-4 cursor-pointer ${colors[index % colors.length]} hover:opacity-80 transition`}
+      className={`rounded-sm text-white p-4 cursor-pointer hover:opacity-80 transition`}
+      style={{background: gradients [index % gradients.length]}}
       onClick={handleClick}
     >
       <h3 className="text-lg font-bold">{displayNames[category.slug]||category.className}</h3>
