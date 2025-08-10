@@ -8,12 +8,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim() !== "") {
-      navigate(`/search?keyword=${encodeURIComponent(searchTerm)}`);
-    }
-  };
+
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-black/20 backdrop-blur-md text-white ">
@@ -26,21 +21,32 @@ const Header = () => {
 
         {/* Search Bar */}
         <div className="relative hidden md:block w-64">
-          <form onSubmit={handleSearch}>
+          <div>
             <div className="relative hidden md:block w-64">
               <input
-                type="text"
+                type="search"
                 placeholder="Tìm kiếm..."
                 value={searchTerm}
+                onKeyDown={(e) => {
+                  console.log(e)
+                  if (e.key === "Enter") {
+                    console.log("Từ khóa tìm:", searchTerm);
+                    // Gọi hàm tìm kiếm ở đây
+                    navigate(`/search?keyword=${encodeURIComponent(searchTerm)}`);
+
+
+                  }
+                }}
                 onChange={(e) => setsearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
               <FontAwesomeIcon
                 icon={faMagnifyingGlass}
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white"
               />
             </div>
-          </form>
+          </div>
 
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
@@ -76,6 +82,18 @@ const Header = () => {
           <div className="relative">
             <input
               type="text"
+               value={searchTerm}
+                onKeyDown={(e) => {
+                  console.log(e)
+                  if (e.key === "Enter") {
+                    console.log("Từ khóa tìm:", searchTerm);
+                    // Gọi hàm tìm kiếm ở đây
+                    navigate(`/search?keyword=${encodeURIComponent(searchTerm)}`);
+                    setMenuOpen(false);
+
+                  } 
+                }}
+                onChange={(e) => setsearchTerm(e.target.value)}
               placeholder="Tìm kiếm..."
               className="w-full pl-10 pr-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

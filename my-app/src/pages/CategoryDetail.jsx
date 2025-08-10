@@ -5,22 +5,24 @@ import Image from "../components/Image";
 import Loading from "../components/Loading";
 
 const CategoryDetail = () => {
-  const { slug } = useParams();
+  const { slug, describe } = useParams();
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Cần kiểm tra từ API
   const [loading, setLoading] = useState(true);
+  const [nameMovie, setNameMovie] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
     console.log("Fetching category:", slug); // Kiểm tra slug
     axios
-      .get(`https://phimapi.com/v1/api/the-loai/${slug}?page=${page}&limit=24`)
+      .get(`https://phimapi.com/v1/api/${describe}/${slug}?page=${page}&limit=24`)
       .then((res) => {
         console.log("API Response:", res.data); // Kiểm tra phản hồi
         const data = res.data.data;
         setMovies(data.items || []);
+        setNameMovie(data.titlePage)
         // Kiểm tra trường totalPages hoặc số lượng phim tổng cộng
         setTotalPages(data.totalPages || Math.ceil(data.total || 1) / data.pagination?.limit || 20);
         setLoading(false);
@@ -30,18 +32,11 @@ const CategoryDetail = () => {
         setMovies([]);
         setLoading(false);
       });
+    window.scrollTo({ top: 0, behavior: "smooth" })
+
   }, [slug, page]);
 
-  const categoryName = {
-    "hanh-dong": "Hành Động",
-    "mien-tay": "Miền Tây",
-    "tre-em": "Hoạt Hình",
-    "lich-su": "Lịch Sử",
-    "co-trang": "Cổ Trang",
-    "chien-tranh": "Chiến Tranh",
-    "vien-tuong": "Viễn Tưởng",
-    "kinh-di": "Kinh Dị",
-  }
+
   const handleClick = (slug) => {
     navigate(`/phim/${slug}`);
   }
@@ -67,7 +62,7 @@ const CategoryDetail = () => {
   return (
     <div className="max-w-[1600px] mx-auto min-h-scree text-white px-4 sm:px-6 lg:px-20 py-12">
       <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4">Thể Loại: {categoryName[slug] || slug}</h2>
+        <h2 className="text-2xl font-bold mb-4">{describe === "the-loai" ? "Thể loại : " : "Quốc gia : "} {nameMovie}</h2>
 
 
         <>

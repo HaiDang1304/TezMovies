@@ -1,81 +1,114 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Loading from "./components/Loading";
+import Layout from "./components/Layout"; // import Layout
 import MovieList from "./components/MovieList";
-import Header from "./components/Header";
+import CategoryList from "./components/CategoryList";
 import WatchMovie from "./pages/WatchMovie";
 import MovieDetail from "./pages/MovieDetail";
-import CategoryList from "./components/CategoryList";
 import CategoryDetail from "./pages/CategoryDetail";
 import SearchPage from "./pages/SearchPage";
-import MovieVN from "./components/MovieVN";
-import MovieTQ from "./components/MovieTQ";
-import MovieHQ from "./components/MovieHQ";
-import MovieAction from "./components/MovieAction";
-
-
+import SectionMovie from "./components/SectionMovie";
+import NotFound from "./components/NotFound";
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
-
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve,1000));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getData();
-  },[]);
-
-
-  if (loading) {
-    return (
-      <Loading />
-    )
-  }
 
 
   return (
     <Router>
-      <div className="flex-col items-center">
-        <div className="w-full">
-          <Header />
-        </div>
-
-        <Routes>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          {/* Trang chủ */}
           <Route
-            path="/"
+            index
             element={
               <>
                 <MovieList />
                 <CategoryList />
-                <MovieVN />
-                <MovieTQ />
-                <MovieHQ />
-                <MovieAction/>
+                <SectionMovie
+                  describe="quoc-gia"
+                  slug="viet-nam"
+                  orientation="horizontal"
+                />
+                <SectionMovie
+                  describe="quoc-gia"
+                  slug="trung-quoc"
+                  orientation="horizontal"
+                />
+                <SectionMovie
+                  describe="quoc-gia"
+                  slug="han-quoc"
+                  orientation="horizontal"
+                />
+                <SectionMovie
+                  describe="the-loai"
+                  slug="hanh-dong"
+                  swiperResponsive={{
+                    0: { slidesPerView: 2 },
+                    640: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    1024: { slidesPerView: 5 },
+                    1280: { slidesPerView: 6 },
+                  }}
+
+
+                />
+                <SectionMovie
+                  describe="the-loai"
+                  slug="kinh-di"
+                  orientation="horizontal"
+
+                />
+                <SectionMovie
+                  describe="the-loai"
+                  slug="tinh-cam"
+                  swiperResponsive={{
+                    0: { slidesPerView: 2 },
+                    640: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    1024: { slidesPerView: 5 },
+                    1280: { slidesPerView: 6 },
+                  }}
+                />
+                <SectionMovie
+                  describe="the-loai"
+                  slug="phieu-luu"
+                  orientation="horizontal"
+                />
+                <SectionMovie
+                  describe="the-loai"
+                  slug="gia-dinh"
+                  swiperResponsive={{
+                    0: { slidesPerView: 2 },
+                    640: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    1024: { slidesPerView: 5 },
+                    1280: { slidesPerView: 6 },
+                  }}
+                />
+                <SectionMovie
+                  describe="the-loai"
+                  slug="co-trang"
+                  orientation="horizontal"
+                />
               </>
             }
           />
-          {/* ✅ Trang chi tiết phim */}
-          <Route path="/phim/:slug" element={<MovieDetail />} />
 
+          {/* Trang chi tiết phim */}
+          <Route path="phim/:slug" element={<MovieDetail />} />
 
-          {/* ✅ Trang xem phim */}
-          <Route path="/xem-phim/:slug" element={<WatchMovie />} />
+          {/* Trang xem phim */}
+          <Route path="xem-phim/:slug" element={<WatchMovie />} />
 
-          {/* ✅ Trang thể loại */}
-          <Route path="/the-loai/:slug" element={<CategoryDetail />} />
-          <Route path="/search" element={<SearchPage />} />
+          {/* Trang thể loại */}
+          <Route path=":describe/:slug" element={<CategoryDetail />} />
 
-
-        </Routes>
-      </div>
+          {/* Trang tìm kiếm */}
+          <Route path="search" element={<SearchPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
     </Router>
   );
 };

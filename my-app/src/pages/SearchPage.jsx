@@ -19,10 +19,10 @@ const SearchPage = () => {
       if (!keyword) return;
       setLoading(true);
       const data = await searchMovies({ keyword });
+        setMovies(data.data.items || []);
+
       console.log("Phim:", data?.data?.items);
-      if (data?.data?.items) {
-        setMovies(data.data.items);
-      }
+     
       setLoading(false);
     };
 

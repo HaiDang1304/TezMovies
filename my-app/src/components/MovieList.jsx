@@ -24,7 +24,7 @@ const MovieList = () => {
   return (
     <div className="bg-gray-900 py-4 w-full">
       <div className="max-w-7xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-white mb-6">🎬 Phim mới cập nhật</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Phim mới cập nhật</h2>
 
         <Swiper
           modules={[Autoplay, Pagination]}
