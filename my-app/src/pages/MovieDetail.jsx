@@ -5,7 +5,6 @@ import MovieInfo from "../components/MovieInfo";
 import Loading from "../components/Loading";
 import TabMenuMovieDetail from "../components/TabMenuMovieDetail"
 import { fetchTmdbActors } from "../utils/fetchTmdbActors";
-
 import { movieRecommended } from "../utils/fetchMovieRecommended";
 import MoviesRecommended from "../components/MovieRecommended";
 import Image from "../components/Image";
@@ -48,13 +47,6 @@ const MovieDetail = () => {
         const tmdbId = res.data.movie?.tmdb?.id;
         const type = res.data.movie?.tmdb?.type;
 
-        if (tmdbId && type) {
-          const actors = await fetchTmdbActors(type, tmdbId);
-          setTmdbActors(actors);
-
-          const recommended = await fetchRecommendedMovies(type, tmdbId);
-          setRecommendedMovies(recommended);
-        }
 
       } catch (error) {
         console.error("Lỗi khi fetch dữ liệu:", error);
