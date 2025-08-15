@@ -102,9 +102,9 @@ const MovieDetail = () => {
                     <button
                       key={groupIndex}
                       onClick={() => setCurrentGroupIndex(groupIndex)}
-                      className={`px-3 py-1 border rounded text-sm ${currentGroupIndex === groupIndex
-                        ? "!bg-yellow-900 text-white font-bold !hover:bg-yellow-900"
-                        : "bg-gray-900 text-white"
+                      className={`px-3 py-1 rounded text-sm ${currentGroupIndex === groupIndex
+                        ? "!bg-yellow-600 text-white font-bold !hover:bg-yellow-900"
+                        : "bg-gray-600 text-white hover:bg-yellow-400"
                         }`}
                     >
                       Tập {groupIndex * groupSize + 1} - {Math.min((groupIndex + 1) * groupSize, episodeList[0]?.server_data.length)}
@@ -118,9 +118,9 @@ const MovieDetail = () => {
                     <button
                       key={index}
                       onClick={() => handleWatchEpisode(ep)}
-                      className={`px-3 py-1 border rounded text-sm ${currentEpisode?.name === ep.name
-                        ? "!bg-yellow-800 text-white font-bold"
-                        : "bg-gray-900 text-white hover:bg-yellow-400"
+                      className={`px-3 py-1 rounded text-sm ${currentEpisode?.name === ep.name
+                        ? "!bg-yellow-600 text-white font-bold"
+                        : "bg-gray-600 text-white hover:bg-yellow-400"
                         }`}
                     >
                       {ep.name}
