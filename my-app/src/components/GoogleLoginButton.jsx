@@ -8,7 +8,8 @@ export default function GoogleLoginButton({ onLoginSuccess }) {
     await axios.post('http://localhost:3000/auth/google',
       { token },
       { withCredentials: true }
-    );
+    ); 
+    
 
     window.location.href = "/";
     onLoginSuccess(); // Gọi hàm reload thông tin user
