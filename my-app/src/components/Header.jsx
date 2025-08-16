@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import ModalSearch from "./ModalSeacrch";
+
 
 const Header = ({ onLoginClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +34,9 @@ const Header = ({ onLoginClick }) => {
     }
   };
   console.log("USERRR",user);
-
+  const handleSearch = () =>{
+    setSearchTerm("");
+  }
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:3000/auth/logout", {
@@ -71,6 +75,7 @@ const Header = ({ onLoginClick }) => {
             icon={faMagnifyingGlass}
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white"
           />
+          <ModalSearch searchTerm={searchTerm} />
         </div>
 
         <nav className="hidden md:flex items-center space-x-6 text-lg font-medium">
