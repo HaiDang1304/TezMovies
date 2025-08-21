@@ -10,7 +10,7 @@ import { API_URL } from "../constants/env";
 import Loading from "./Loading";
 
 const SectionMovie = ({
-    describe, slug, swiperResponsive = {
+    describe, slug, title, index, swiperResponsive = {
         0: { slidesPerView: 2 },
         640: { slidesPerView: 3 },
         768: { slidesPerView: 4 },
@@ -21,6 +21,21 @@ const SectionMovie = ({
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [nameMovie, setNameMovie] = useState("");
+    const gradients = [
+        "linear-gradient(135deg, #ff0080, #ff8c00)", // hồng → cam
+        "linear-gradient(135deg, #00f5a0, #00d9f5)", // xanh neon
+        "linear-gradient(135deg, #8a2be2, #ff00ff)", // tím → hồng neon
+        "linear-gradient(135deg, #ff4e50, #f9d423)", // đỏ → vàng
+        "linear-gradient(135deg, #00c6ff, #0072ff)", // xanh đậm → xanh nhạt
+        "linear-gradient(135deg, #f953c6, #b91d73)", // hồng đậm → tím
+        "linear-gradient(135deg, #ff9966, #ff5e62)", // cam → đỏ
+        "linear-gradient(135deg, #36d1dc, #5b86e5)", // xanh ngọc → xanh tím
+        "linear-gradient(135deg, #11998e, #38ef7d)", // xanh lục → xanh lá neon
+        "linear-gradient(135deg, #ee9ca7, #ffdde1)", // hồng pastel → trắng hồng
+        "linear-gradient(135deg, #fc6076, #ff9a44)", // đỏ hồng → cam vàng
+        "linear-gradient(135deg, #2980b9, #6dd5fa)", // xanh biển → xanh nhạt
+        "linear-gradient(135deg, #f7971e, #ffd200)"  // vàng cam → vàng tươi
+    ];
 
 
     useEffect(() => {
@@ -38,7 +53,7 @@ const SectionMovie = ({
                 setLoading(true);
                 const res = await axios(`${API_URL}/v1/api/${describe}/${slug}?page=${page}&limit=${limit}`)
                 const data = res.data.data
-                console.log(res)
+  
                 setMovies(data.items || []);
                 setNameMovie(data.titlePage)
 
@@ -54,7 +69,6 @@ const SectionMovie = ({
         window.scrollTo({ top: 0, behavior: "smooth" })
     }, []);
 
-    console.log(movies)
 
     if (loading) return <Loading />;
     // if (!loading || movies.length === 0) return null;
@@ -64,8 +78,8 @@ const SectionMovie = ({
             <div className="max-w-7xl mx-auto px-4 py-4">
                 <Link to={`/${describe}/${slug}`}>
                     <div className="flex justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-white ">
-                            Phim {nameMovie}
+                        <h2 className="text-2xl font-bold bg-clip-text " style={{ backgroundImage: gradients[index % gradients.length] }}>
+                            {title}
                         </h2>
                         <button className="text-white  font-medium text-md bg-gray-900 border border-white px-2 h-8 rounded-3xl hover:text-amber-300 hover:border-amber-300 ">Xem thêm </button>
                     </div>

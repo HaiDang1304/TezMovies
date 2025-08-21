@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import ModalSearch from "./ModalSeacrch";
@@ -25,7 +25,7 @@ const Header = ({ onLoginClick }) => {
       let data = await res.json();
 
       // Nếu avatar là đường dẫn tương đối -> thêm domain backend
-      console.log("avatar",data);
+      console.log("avatar", data);
 
       setUser(data);
     } catch (error) {
@@ -33,8 +33,8 @@ const Header = ({ onLoginClick }) => {
       setUser(null);
     }
   };
-  console.log("USERRR",user);
-  const handleSearch = () =>{
+  console.log("USERRR", user);
+  const handleSearch = () => {
     setSearchTerm("");
   }
   const handleLogout = async () => {
@@ -58,7 +58,7 @@ const Header = ({ onLoginClick }) => {
           <h2 className="text-3xl font-bold text-red-600">Movies</h2>
         </a>
 
-        <div className="relative hidden md:block w-64">
+        <div className="relative hidden md:block min-w-[360px]">
           <input
             type="search"
             placeholder="Tìm kiếm..."
@@ -79,7 +79,7 @@ const Header = ({ onLoginClick }) => {
         </div>
 
         <nav className="hidden md:flex items-center space-x-6 text-lg font-medium">
-          <a href="#" className="hover:underline !text-white">Chủ đề</a>
+          <Link to={"/chu-de"} className="hover:underline !text-white">Chủ đề</Link>
           <a href="#" className="hover:underline !text-white">Thể Loại</a>
           <a href="#" className="hover:underline !text-white">Phim Mới</a>
           <a href="#" className="hover:underline !text-white">Phim Hot</a>
@@ -105,11 +105,11 @@ const Header = ({ onLoginClick }) => {
               referrerPolicy="no-referrer"
               alt={user?.name || "User avatar"}
               className="w-10 h-10 rounded-full border"
-              // onError={(e) => {
-              //   console.error("Avatar load failed for:", e.target.src);
-              //   e.target.onerror = null;
-              //   e.target.src = "/default-avatar.avif";
-              // }}
+            // onError={(e) => {
+            //   console.error("Avatar load failed for:", e.target.src);
+            //   e.target.onerror = null;
+            //   e.target.src = "/default-avatar.avif";
+            // }}
             />
 
             <span>{user.name || "Unknown User"}</span>
@@ -153,7 +153,7 @@ const Header = ({ onLoginClick }) => {
           </div>
 
           <nav className="flex flex-col space-y-2 text-lg">
-            <a href="#" className="hover:underline !text-white">Chủ đề</a>
+            <Link to={"/chu-de"} className="hover:underline !text-white">Chủ đề</Link>
             <a href="#" className="hover:underline !text-white">Thể Loại</a>
             <a href="#" className="hover:underline !text-white">Phim Mới</a>
             <a href="#" className="hover:underline !text-white">Phim Hot</a>

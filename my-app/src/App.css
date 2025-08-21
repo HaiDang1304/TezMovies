@@ -40,3 +40,11 @@
 .read-the-docs {
   color: #888;
 }
+.gradient-text {
+  font-size: 48px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ff7eb3, #ff758c, #ff7eb3); /* gradient */
+  -webkit-background-clip: text; /* áp dụng background vào chữ */
+  -webkit-text-fill-color: transparent; /* làm chữ trong suốt để lộ gradient */
+  background-clip: text; /* hỗ trợ Firefox */
+}
