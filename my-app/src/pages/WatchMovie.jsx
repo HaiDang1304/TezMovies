@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 const API_KEY = "8afc137d2cb21415981fb4af3b88e9e5";
 import MovieInfo from "../components/MovieInfo";
+import App from "../App";
 
 
 
@@ -96,7 +97,10 @@ const WatchMovie = () => {
 
 
   return (
-    <div className="p-4 max-w-7xl mx-auto text-white">
+    <div className="p-4 mt-14 max-w-7xl mx-auto text-white">
+      <div className="pb-6">
+        <h2 className="text-2xl font-bold gradient-text">Bạn Đang Xem Phim {movie?.name} {currentEpisode?.name}  </h2>
+      </div>
       {/* Video */}
       {currentEpisode ? (
         <div className="aspect-video mb-4">
@@ -125,9 +129,9 @@ const WatchMovie = () => {
               <button
                 key={groupIndex}
                 onClick={() => setCurrentGroupIndex(groupIndex)}
-                className={`px-3 py-1 border rounded text-sm ${currentGroupIndex === groupIndex
-                  ? "!bg-yellow-900 text-white font-bold !hover:bg-yellow-900"
-                  : "bg-gray-300 text-white"
+                className={`px-3 py-1 rounded text-sm ${currentGroupIndex === groupIndex
+                  ? "!bg-yellow-600 text-white font-bold !hover:bg-yellow-900"
+                  : "bg-gray-600 text-white hover:bg-yellow-400"
                   }`}
               >
                 Tập {groupIndex * groupSize + 1} -{" "}
@@ -144,9 +148,9 @@ const WatchMovie = () => {
               <button
                 key={index}
                 onClick={() => setCurrentEpisode(ep)}
-                className={`px-3 py-1 border rounded text-sm bg-gray-500 ${currentEpisode?.name === ep.name
-                  ? "!bg-yellow-800 text-white font-bold"
-                  : "bg-gray-300 text-white hover:bg-yellow-400"
+                className={`px-3 py-1 rounded text-sm bg-gray-500 ${currentEpisode?.name === ep.name
+                  ? "!bg-yellow-600 text-white font-bold"
+                  : "bg-gray-600 text-white hover:bg-yellow-400"
                   }`}
               >
                 {ep.name}

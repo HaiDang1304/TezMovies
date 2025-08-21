@@ -18,7 +18,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  /* color: #646cff; */
   text-decoration: inherit;
 }
 
@@ -70,6 +70,7 @@ button:focus-visible {
   background-size: 20% 100%;
   animation: bars-loading 1s infinite linear;
 }
+
 
 @keyframes bars-loading {
   0% {

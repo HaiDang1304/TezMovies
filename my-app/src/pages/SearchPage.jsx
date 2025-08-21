@@ -19,10 +19,10 @@ const SearchPage = () => {
       if (!keyword) return;
       setLoading(true);
       const data = await searchMovies({ keyword });
-        setMovies(data.data.items || []);
+      setMovies(data.data.items || []);
 
       console.log("Phim:", data?.data?.items);
-     
+
       setLoading(false);
     };
 
@@ -58,7 +58,14 @@ const SearchPage = () => {
                       {/* Badge góc trên trái */}
                       <div className="absolute top-2 left-2 hidden lg:flex flex-wrap gap-1">
                         <span className="bg-black text-white text-xs  font-medium px-1 py-0.5 rounded">{movie.quality}</span>
-                        <span className="bg-white text-black text-xs font-medium px-1 py-0.5 rounded">{movie.lang}</span>
+                        {movie.lang.split(/\s*\+\s*/).map((langItem, index) => (
+                          <span
+                            key={index}
+                            className="bg-white text-black text-xs font-medium px-1 py-0.5 rounded mr-1">
+                            {langItem}
+                          </span>
+                        ))}
+
                       </div>
 
                       {/* Badge tập phim (góc dưới giữa) */}
