@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import MovieInfo from "../components/MovieInfo";
 import Loading from "../components/Loading";
@@ -8,6 +8,7 @@ import { fetchTmdbActors } from "../utils/fetchTmdbActors";
 import { movieRecommended } from "../utils/fetchMovieRecommended";
 import MoviesRecommended from "../components/MovieRecommended";
 import Image from "../components/Image";
+import {getIdLinkm3u8} from "../utils/getIdLinkm3u8";
 
 
 
@@ -24,15 +25,11 @@ const MovieDetail = () => {
   const [expanded, setExpanded] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [tmdbActors, setTmdbActors] = useState([]);
-
+  const [currentServerIndex, setCurrentServerIndex] = useState(0);
 
 
   const toggleContent = () => setExpanded(!expanded); /*rút gọn/xem thêm*/
 
-  const handleWatchEpisode = (ep) => {
-    navigate(`/xem-phim/${slug}?ep=${encodeURIComponent(ep.name)}`);
-  }
-  const [recommendedMovies, setRecommendedMovies] = useState([]);
 
 
 
@@ -59,12 +56,12 @@ const MovieDetail = () => {
     getData();
   }, [slug]);
 
-
+  const currentServerData = episodeList[currentServerIndex]?.server_data || [];
   const groupSize = episodeList[0]?.server_data?.length > 100 ? 100 : 10;
 
   const groupedEpisodes = useMemo(() => {
     if (!episodeList || episodeList.length === 0) return [];
-    const serverData = episodeList[0]?.server_data || [];
+    const serverData = episodeList[currentServerIndex]?.server_data || [];
     const result = [];
 
     for (let i = 0; i < serverData.length; i += groupSize) {
@@ -72,7 +69,8 @@ const MovieDetail = () => {
     }
 
     return result;
-  }, [episodeList, groupSize]);
+  }, [episodeList, currentServerIndex, groupSize]);
+
 
   console.log("episodeList:", episodeList);
   if (loading) return <Loading />;
@@ -85,6 +83,12 @@ const MovieDetail = () => {
     const videoId = urlObj.searchParams.get("v");
     return `https://www.youtube.com/embed/${videoId}`;
   };
+  const handleChangeServer = (index) => {
+    setCurrentServerIndex(index);
+    setCurrentGroupIndex(0); 
+    // reset về trang 1 của server mới
+  };
+
 
   /*Tag */
   const tabs = [
@@ -92,9 +96,45 @@ const MovieDetail = () => {
       label: "Tập Phim",
       content: (
         <ul className="text-gray-300 list-disc list-inside">
+
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold mb-4">Danh sách tập phim</h2>
+            <div className="server-buttons mb-4">
+              <div className="flex flex-wrap gap-2">
+                {episodeList.map((episode, index) => {
+                  // Đổi tên hiển thị
+                  let displayName = "";
+                  if (episode.server_name.includes("Vietsub")) {
+                    displayName = "Phụ đề";
+                  } else if (episode.server_name.includes("Thuyết Minh")) {
+                    displayName = "Thuyết minh";
+                  } else {
+                    displayName = "Lồng tiếng"; // fallback
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleChangeServer(index)}
+                      className={`
+            px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-200
+            ${currentServerIndex === index
+                          ? "bg-yellow-600 border-yellow-600 text-white shadow-lg transform scale-105"
+                          : "bg-transparent border-gray-500 text-gray-300 hover:border-yellow-400 hover:text-yellow-400"
+                        }
+          `}
+                    >
+                      {displayName}
+                      <span className="ml-1 text-xs opacity-75">
+                        ({episode.server_data.length} tập)
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="">
+
               <div>
                 <h2 className="text-l mb-2 font-semibold">Danh sách tập</h2>
                 <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2">
@@ -107,24 +147,31 @@ const MovieDetail = () => {
                         : "bg-gray-600 text-white hover:bg-yellow-400"
                         }`}
                     >
-                      Tập {groupIndex * groupSize + 1} - {Math.min((groupIndex + 1) * groupSize, episodeList[0]?.server_data.length)}
+                      Tập {groupIndex * groupSize + 1} - {Math.min(
+                        (groupIndex + 1) * groupSize,
+                        episodeList[currentServerIndex]?.server_data.length
+                      )}
                     </button>
                   ))}
+
                 </div>
 
                 <h2 className="text-l mb-2 font-semibold">Tập hiện tại</h2>
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-6 gap-2 mb-4">
                   {groupedEpisodes[currentGroupIndex]?.map((ep, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleWatchEpisode(ep)}
-                      className={`px-3 py-1 rounded text-sm ${currentEpisode?.name === ep.name
-                        ? "!bg-yellow-600 text-white font-bold"
-                        : "bg-gray-600 text-white hover:bg-yellow-400"
-                        }`}
-                    >
-                      {ep.name}
-                    </button>
+                    <Link to={`/xem-phim/${slug}?id=${getIdLinkm3u8(ep.link_m3u8)}&index=${currentServerIndex}&groupIndex=${currentGroupIndex}`}>
+
+                      <button
+                        id={getIdLinkm3u8(ep.link_m3u8)}
+                        key={index}
+                        className={`px-3 py-1 rounded text-sm ${currentEpisode?.name === ep.name
+                          ? "!bg-yellow-600 text-white font-bold"
+                          : "bg-gray-600 text-white hover:bg-yellow-400"
+                          }`}
+                      >
+                        {ep.name}
+                      </button>
+                    </Link>
                   ))}
                 </div>
 
@@ -159,7 +206,7 @@ const MovieDetail = () => {
                               : actor.avatar_url
                           }
                           alt={actor.name}
-                  
+
                         />
 
 
@@ -203,7 +250,7 @@ const MovieDetail = () => {
     {
       label: "Đề xuất",
       content: (
-        <MoviesRecommended/>
+        <MoviesRecommended />
       ),
     },
   ];
@@ -301,12 +348,51 @@ const MovieDetail = () => {
 
               </div>
               <div className="w-full px-6 py-4 bg-gradient-to-b from-gray-800 to-gray-transparent rounded-2xl lg:col-span-8 col-span-12">
-                <button
-                  className="px-4 py-2 !bg-yellow-600 hover:!bg-amber-400 rounded text-white flex !rounded-4xl"
-                  onClick={() => navigate(`/xem-phim/${slug}?tap=${episodeList?.[0]?.name}`)}
-                >
-                  ▶ Xem phim
-                </button>
+                <div className="gap-4">
+                  <div className="flex flex-row items-center gap-6">
+                    <button
+                      className="px-4 py-2 !bg-yellow-600 hover:!bg-amber-400 rounded text-white !rounded-4xl"
+                      onClick={() => navigate(`/xem-phim/${slug}?tap=${episodeList?.[0]?.name}`)}
+                    >
+                      ▶ Xem phim
+                    </button>
+                    <div className="flex flex-row">
+                      <div className=" p-4 select-none sm:min-w-16 cursor-pointer gap-2 transform-all rounded-2xl hover:bg-[#ffffff05] flex flex-col items-center justify-center text-center">
+                        <div>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height={"1em"} width={"1em"}>
+                            <path d="M241 87.1l15 20.7 15-20.7C296 52.5 336.2 32 378.9 32 452.4 32 512 91.6 512 165.1l0 2.6c0 112.2-139.9 242.5-212.9 298.2-12.4 9.4-27.6 14.1-43.1 14.1s-30.8-4.6-43.1-14.1C139.9 410.2 0 279.9 0 167.7l0-2.6C0 91.6 59.6 32 133.1 32 175.8 32 216 52.5 241 87.1z" fill="white" /></svg>
+                        </div>
+                        <h3 className="text-sm font-medium ">Yêu Thích</h3>
+                      </div>
+                      <div className=" p-4 select-none sm:min-w-16 cursor-pointer gap-2 transform-all rounded-2xl hover:bg-[#ffffff05] flex flex-col items-center justify-center text-center">
+                        <div>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width={"1em"} height={"1.5em"}>
+                            <path d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z" fill="white" /></svg>
+                        </div>
+                        <h3 className="text-sm font-medium ">Thêm Vào</h3>
+                      </div>
+                      <div className=" p-4 select-none sm:min-w-16 cursor-pointer gap-2 transform-all rounded-2xl hover:bg-[#ffffff05] flex flex-col items-center justify-center text-center">
+                        <div>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width={"1em"} height={"1em"}>
+                            <path d="M568.4 37.7C578.2 34.2 589 36.7 596.4 44C603.8 51.3 606.2 62.2 602.7 72L424.7 568.9C419.7 582.8 406.6 592 391.9 592C377.7 592 364.9 583.4 359.6 570.3L295.4 412.3C290.9 401.3 292.9 388.7 300.6 379.7L395.1 267.3C400.2 261.2 399.8 252.3 394.2 246.7C388.6 241.1 379.6 240.7 373.6 245.8L261.2 340.1C252.1 347.7 239.6 349.7 228.6 345.3L70.1 280.8C57 275.5 48.4 262.7 48.4 248.5C48.4 233.8 57.6 220.7 71.5 215.7L568.4 37.7z" fill="white" /></svg>
+                        </div>
+                        <h3 className="text-sm font-medium ">Chia Sẻ</h3>
+                      </div>
+                      <div className=" p-4 select-none sm:min-w-16 cursor-pointer gap-2 transform-all rounded-2xl hover:bg-[#ffffff05] flex flex-col items-center justify-center text-center">
+                        <div>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width={"1em"} height={"1em"}>
+                            <path d="M576 304C576 436.5 461.4 544 320 544C282.9 544 247.7 536.6 215.9 523.3L97.5 574.1C88.1 578.1 77.3 575.8 70.4 568.3C63.5 560.8 62 549.8 66.8 540.8L115.6 448.6C83.2 408.3 64 358.3 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304z" fill="white" /></svg>
+                        </div>
+                        <h3 className="text-sm font-medium ">Bình Luận</h3>
+                      </div>
+                    </div>
+
+
+
+                  </div>
+
+                </div>
+
 
 
                 <div className="">
