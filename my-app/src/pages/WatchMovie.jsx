@@ -18,20 +18,26 @@ const WatchMovie = () => {
   const [credits, setCredits] = useState([]);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [tmdbActors, setTmdbActors] = useState([]);
+  const [episodeList, setEpisodeList] = useState([]);
+  const [currentServerIndex, setCurrentServerIndex] = useState(0);
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id"); // "124"
+  const index = params.get("index");
+  const groupIndex = params.get("groupIndex");
 
   {/* Group tập phim theo 10 tập 1 group*/ }
-  const episodeList = movieData?.episodes?.[0]?.server_data || [];
-  // Tính groupSize một lần (trước useMemo)
-  const groupSize = episodeList?.length > 100 ? 100 : 10;
+  // const episodeList = movieData?.episodes?.[0]?.server_data || [];
 
-  const groupedEpisodes = useMemo(() => {
-    if (!episodeList || episodeList.length === 0) return [];
-    const result = [];
-    for (let i = 0; i < episodeList.length; i += groupSize) {
-      result.push(episodeList.slice(i, i + groupSize));
-    }
-    return result;
-  }, [episodeList, groupSize]);
+  // const groupSize = episodeList?.length > 100 ? 100 : 10;
+
+  // const groupedEpisodes = useMemo(() => {
+  //   if (!episodeList || episodeList.length === 0) return [];
+  //   const result = [];
+  //   for (let i = 0; i < episodeList.length; i += groupSize) {
+  //     result.push(episodeList.slice(i, i + groupSize));
+  //   }
+  //   return result;
+  // }, [episodeList, groupSize]);
 
   useEffect(() => {
     const fetchMovieAndActors = async () => {
@@ -40,16 +46,17 @@ const WatchMovie = () => {
         const res = await axios.get(`https://phimapi.com/phim/${slug}`);
         const data = res.data;
         setMovieData(data);
+        setEpisodeList(res.data.episodes);
 
-        const episodeList = data.episodes?.[0]?.server_data || []
-        const selectedEpisode = episodeList.find(e => e.name === ep);
-        setCurrentEpisode(selectedEpisode || episodeList[0])
+        // const episodeList = data.episodes?.[0]?.server_data || []
+        // const selectedEpisode = episodeList.find(e => e.name === ep);
+        // setCurrentEpisode(selectedEpisode || episodeList[0])
 
-        if (selectedEpisode) {
-          const index = episodeList.findIndex(e => e.name === selectedEpisode.name);
-          const groupIndex = Math.floor(index / groupSize);
-          setCurrentGroupIndex(groupIndex);
-        }
+        // if (selectedEpisode) {
+        //   const index = episodeList.findIndex(e => e.name === selectedEpisode.name);
+        //   const groupIndex = Math.floor(index / groupSize);
+        //   setCurrentGroupIndex(groupIndex);
+        // }
 
         // 2. Lấy ID và type từ URL (vd: ?type=movie&id=12345)
         const tmdbId = data.movie?.tmdb?.id;
@@ -82,6 +89,65 @@ const WatchMovie = () => {
     fetchMovieAndActors();
   }, [slug, location.search]);
 
+
+  const currentServerData = episodeList[currentServerIndex]?.server_data || [];
+  const groupSize = episodeList[0]?.server_data?.length > 100 ? 100 : 10;
+
+  const groupedEpisodes = useMemo(() => {
+    if (!episodeList || episodeList.length === 0) return [];
+    const serverData = episodeList[currentServerIndex]?.server_data || [];
+    const result = [];
+
+    for (let i = 0; i < serverData.length; i += groupSize) {
+      result.push(serverData.slice(i, i + groupSize));
+    }
+
+    return result;
+  }, [episodeList, currentServerIndex, groupSize]);
+
+
+  useEffect(() => {
+    let episodeMerch = [];
+    episodeList.forEach((ep) => {
+      episodeMerch = [...episodeMerch, ...ep.server_data]
+
+    })
+   
+    const currentEpisode = episodeMerch.find(ep => ep.link_m3u8.includes(id))
+    
+
+
+    if (currentEpisode) {
+      setCurrentEpisode(currentEpisode)
+
+    }
+    else {
+      setCurrentEpisode(episodeMerch[0])
+    }
+  }, [groupedEpisodes, id])
+
+  useEffect(() => {
+    if (index > episodeList.length) {
+      setCurrentServerIndex(0)
+    }
+    else {
+      setCurrentServerIndex(index)
+    }
+    console.log("222222", index);
+    console.log("333333", episodeList);
+  }, [index,episodeList])
+  useEffect(() => {
+    if (groupIndex > groupedEpisodes.length) {
+      setCurrentGroupIndex(0)
+    } else {
+      setCurrentGroupIndex(groupIndex);
+    }
+    console.log("555555", currentGroupIndex);
+
+  }, [groupIndex,groupedEpisodes])
+  useEffect(() => {
+
+  })
   if (!movieData) return <p className="text-center mt-10">Đang tải...</p>;
 
   const { movie, episodes } = movieData;
@@ -94,7 +160,10 @@ const WatchMovie = () => {
   };
   const movieStatus = statusMap[movie.status] || "Đang cập nhật";
 
-
+  const handleChangeServer = (index) => {
+    setCurrentServerIndex(index);
+    setCurrentGroupIndex(0); // reset về trang 1 của server mới
+  };
 
   return (
     <div className="p-4 mt-14 max-w-7xl mx-auto text-white">
@@ -120,7 +189,40 @@ const WatchMovie = () => {
         <div>
           <MovieInfo movie={movie} />
           {/* Danh sách tập */}
-
+          <div className="flex flex-wrap gap-2">
+            {episodeList.map((episode, index) => {
+              // Đổi tên hiển thị
+              let displayName = "";
+              if (episode.server_name.includes("Vietsub")) {
+                displayName = "Phụ đề";
+              } else if (episode.server_name.includes("Thuyết Minh")) {
+                displayName = "Thuyết minh";
+              } else {
+                displayName = "Lồng tiếng"; // fallback
+              }
+              console.log("werwr", currentServerIndex === index);
+              console.log("cqweqq", currentServerIndex);
+              console.log("index", index);
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleChangeServer(index)}
+                  className={`
+            px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-200
+            ${currentServerIndex == index
+                      ? "bg-yellow-600 border-yellow-600 text-white shadow-lg transform scale-105"
+                      : "bg-transparent border-gray-500 text-gray-300 hover:border-yellow-400 hover:text-yellow-400"
+                    }
+          `}
+                >
+                  {displayName}
+                  <span className="ml-1 text-xs opacity-75">
+                    ({episode.server_data.length} tập)
+                  </span>
+                </button>
+              );
+            })}
+          </div>
           <h2 className="text-l mb-2 font-semibold">Danh sách tập</h2>
 
           {/* Selector cho nhóm tập */}
@@ -129,13 +231,15 @@ const WatchMovie = () => {
               <button
                 key={groupIndex}
                 onClick={() => setCurrentGroupIndex(groupIndex)}
-                className={`px-3 py-1 rounded text-sm ${currentGroupIndex === groupIndex
+                className={`px-3 py-1 rounded text-sm ${currentGroupIndex == groupIndex
                   ? "!bg-yellow-600 text-white font-bold !hover:bg-yellow-900"
                   : "bg-gray-600 text-white hover:bg-yellow-400"
                   }`}
               >
-                Tập {groupIndex * groupSize + 1} -{" "}
-                {Math.min((groupIndex + 1) * groupSize, episodeList.length)}
+                Tập {groupIndex * groupSize + 1} - {Math.min(
+                  (groupIndex + 1) * groupSize,
+                  episodeList[currentServerIndex]?.server_data.length
+                )}
               </button>
             ))}
           </div>

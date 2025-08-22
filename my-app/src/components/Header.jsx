@@ -4,8 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import ModalSearch from "./ModalSeacrch";
 
-
-const Header = ({ onLoginClick }) => {
+const Header = ({ onLoginClick, onRegisterClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -29,14 +28,16 @@ const Header = ({ onLoginClick }) => {
 
       setUser(data);
     } catch (error) {
-      console.error("Error fetching user:", error);
+     
       setUser(null);
     }
   };
   console.log("USERRR", user);
+  
   const handleSearch = () => {
     setSearchTerm("");
   }
+  
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:3000/auth/logout", {
@@ -93,7 +94,10 @@ const Header = ({ onLoginClick }) => {
             >
               Đăng Nhập
             </button>
-            <button className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">
+            <button 
+              onClick={onRegisterClick}
+              className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+            >
               Đăng Ký
             </button>
           </div>
@@ -105,11 +109,6 @@ const Header = ({ onLoginClick }) => {
               referrerPolicy="no-referrer"
               alt={user?.name || "User avatar"}
               className="w-10 h-10 rounded-full border"
-            // onError={(e) => {
-            //   console.error("Avatar load failed for:", e.target.src);
-            //   e.target.onerror = null;
-            //   e.target.src = "/default-avatar.avif";
-            // }}
             />
 
             <span>{user.name || "Unknown User"}</span>
@@ -162,12 +161,21 @@ const Header = ({ onLoginClick }) => {
           {!user ? (
             <div className="flex space-x-3 mt-3">
               <button
-                onClick={onLoginClick}
+                onClick={() => {
+                  onLoginClick();
+                  setMenuOpen(false);
+                }}
                 className="w-full bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
               >
                 Đăng Nhập
               </button>
-              <button className="w-full bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">
+              <button 
+                onClick={() => {
+                  onRegisterClick();
+                  setMenuOpen(false);
+                }}
+                className="w-full bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+              >
                 Đăng Ký
               </button>
             </div>
