@@ -11,6 +11,7 @@ import CategoryDetail from "./pages/CategoryDetail";
 import SearchPage from "./pages/SearchPage";
 import NotFound from "./components/NotFound";
 import TopicPages from "./pages/TopicPages";
+import SlideListMovie from "./components/slideListMovie";
 
 const GOOGLE_CLIENT_ID =
   "685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
@@ -50,7 +51,8 @@ const App = () => (
             index
             element={
               <>
-                <MovieList />
+               <SlideListMovie/>
+                {/* <MovieList /> */}
                 <CategoryList />
                 {sectionComponents.map((Section, i) => (
                   <React.Fragment key={i}>{Section}</React.Fragment>

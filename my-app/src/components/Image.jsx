@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Loading from "./Loading"
 
-const Image = ({ orientation = "vertical", rounded = "2xl", className = " ", ...props }) => {
+const Image = ({ orientation = "vertical",pbValueDefault ,rounded = "2xl", className = " ", ...props }) => {
 
     const [statusImg, setStatusImg] = useState("loading")
 
@@ -10,7 +10,7 @@ const Image = ({ orientation = "vertical", rounded = "2xl", className = " ", ...
             ? "pb-[150%]" // dọc
             : orientation === "horizontal"
                 ? "pb-[56.25%]" // ngang (16:9)
-                : "pb-[62%]"; // mặc định
+                : pbValueDefault || "pb-[62%]"
 
     const roundeds = {
         "none": "rounded-none",

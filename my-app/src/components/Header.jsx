@@ -22,17 +22,13 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
       if (!res.ok) throw new Error("Not logged in");
 
       let data = await res.json();
-
-      // Nếu avatar là đường dẫn tương đối -> thêm domain backend
-      console.log("avatar", data);
-
       setUser(data);
     } catch (error) {
      
       setUser(null);
     }
   };
-  console.log("USERRR", user);
+
   
   const handleSearch = () => {
     setSearchTerm("");
@@ -67,6 +63,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 navigate(`/search?keyword=${encodeURIComponent(searchTerm)}`);
+                setSearchTerm("");
               }
             }}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -103,7 +100,6 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
           </div>
         ) : (
           <div className="hidden md:flex items-center space-x-3">
-            {console.log("Avatar URL:", user?.avatar)}
             <img
               src={user?.avatar || "/default-avatar.avif"}
               referrerPolicy="no-referrer"
@@ -181,7 +177,6 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             </div>
           ) : (
             <div className="flex flex-col items-center space-y-2 mt-3">
-              {console.log("Avatar URL:", user?.avatar)}
               <img
                 src={user?.avatar || "/default-avatar.avif"}
                 alt={user?.name || "User avatar"}

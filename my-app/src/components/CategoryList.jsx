@@ -12,6 +12,7 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { Link } from "react-router-dom";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -49,13 +50,13 @@ const CategoryList = () => {
 
           {categories.length > 8 && (
             <SwiperSlide>
-              <div
-                onClick={() => alert("Chuyển tới danh sách đầy đủ")}
+              <Link
+                to={"/chu-de"}
                 className="rounded-lg text-white p-4 cursor-pointer bg-gray-600 hover:opacity-80 transition h-full flex flex-col justify-center"
               >
                 <h3 className="text-lg font-bold">Xem tất cả</h3>
                 <p className="text-sm mt-2">Khám phá thêm &rarr;</p>
-              </div>
+              </Link>
             </SwiperSlide>
           )}
         </Swiper>
