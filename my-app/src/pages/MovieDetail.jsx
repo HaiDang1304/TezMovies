@@ -159,12 +159,12 @@ const MovieDetail = () => {
                 <h2 className="text-l mb-2 font-semibold">Tập hiện tại</h2>
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-6 gap-2 mb-4">
                   {groupedEpisodes[currentGroupIndex]?.map((ep, index) => (
-                    <Link to={`/xem-phim/${slug}?id=${getIdLinkm3u8(ep.link_m3u8)}&index=${currentServerIndex}&groupIndex=${currentGroupIndex}`}>
+                    <Link className="" to={`/xem-phim/${slug}?id=${getIdLinkm3u8(ep.link_m3u8)}&index=${currentServerIndex}&groupIndex=${currentGroupIndex}`}>
 
                       <button
                         id={getIdLinkm3u8(ep.link_m3u8)}
                         key={index}
-                        className={`px-3 py-1 rounded text-sm ${currentEpisode?.name === ep.name
+                        className={` min-w-full py-1 rounded text-sm ${currentEpisode?.name === ep.name
                           ? "!bg-yellow-600 text-white font-bold"
                           : "bg-gray-600 text-white hover:bg-yellow-400"
                           }`}

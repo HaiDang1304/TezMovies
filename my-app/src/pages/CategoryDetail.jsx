@@ -15,7 +15,7 @@ const CategoryDetail = () => {
 
   useEffect(() => {
     setLoading(true);
- 
+
     axios
       .get(`https://phimapi.com/v1/api/${describe}/${slug}?page=${page}&limit=24`)
       .then((res) => {
@@ -24,14 +24,7 @@ const CategoryDetail = () => {
         setMovies(data.items || []);
         setNameMovie(data.titlePage)
         // Kiểm tra trường totalPages hoặc số lượng phim tổng cộng
-        if (data.totalPages) {
-          setTotalPages(data.totalPages);
-        } else if (data.pagination?.limit) {
-          setTotalPages(Math.ceil(data.pagination.total / data.pagination.limit));
-        } else {
-          setTotalPages(1);
-        }
-
+        setTotalPages(data.params.pagination.totalPages)
         setLoading(false);
       })
       .catch((err) => {
