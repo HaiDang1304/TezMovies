@@ -81,6 +81,28 @@ button:focus-visible {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.text-gradient-secondary {
+  background: radial-gradient(
+      60% 130% at 80% -20%,
+      #df6f13 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(100deg, #00c6ff 0%, #7d2ae8 50%, #ff4ecd 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-firt {
+  background: radial-gradient(
+      60% 130% at 80% -20%,
+      #df6f13 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(100deg, #3032c2 0%, #720f54 50%, #ff4ecd 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 
 @keyframes bars-loading {
