@@ -5,12 +5,10 @@ const API_KEY = "8afc137d2cb21415981fb4af3b88e9e5";
 import MovieInfo from "../components/MovieInfo";
 import App from "../App";
 
-
-
-
 const WatchMovie = () => {
   const { slug } = useParams();
   const location = useLocation();
+
   const searchParams = new URLSearchParams(location.search);
   const ep = searchParams.get("ep");
   const [movieData, setMovieData] = useState(null);
@@ -25,7 +23,9 @@ const WatchMovie = () => {
   const index = params.get("index");
   const groupIndex = params.get("groupIndex");
 
-  {/* Group tập phim theo 10 tập 1 group*/ }
+  {
+    /* Group tập phim theo 10 tập 1 group*/
+  }
   // const episodeList = movieData?.episodes?.[0]?.server_data || [];
 
   // const groupSize = episodeList?.length > 100 ? 100 : 10;
@@ -77,7 +77,9 @@ const WatchMovie = () => {
           name: actor.name,
           avatar_url: actor.profile_path
             ? `https://image.tmdb.org/t/p/w185${actor.profile_path}`
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(actor.name)}&background=random`,
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                actor.name
+              )}&background=random`,
         }));
 
         setTmdbActors(formatted);
@@ -88,7 +90,6 @@ const WatchMovie = () => {
 
     fetchMovieAndActors();
   }, [slug, location.search]);
-
 
   const currentServerData = episodeList[currentServerIndex]?.server_data || [];
   const groupSize = episodeList[0]?.server_data?.length > 100 ? 100 : 10;
@@ -105,58 +106,47 @@ const WatchMovie = () => {
     return result;
   }, [episodeList, currentServerIndex, groupSize]);
 
-
   useEffect(() => {
     let episodeMerch = [];
     episodeList.forEach((ep) => {
-      episodeMerch = [...episodeMerch, ...ep.server_data]
+      episodeMerch = [...episodeMerch, ...ep.server_data];
+    });
 
-    })
-   
-    const currentEpisode = episodeMerch.find(ep => ep.link_m3u8.includes(id))
-    
-
+    const currentEpisode = episodeMerch.find((ep) => ep.link_m3u8.includes(id));
 
     if (currentEpisode) {
-      setCurrentEpisode(currentEpisode)
-
+      setCurrentEpisode(currentEpisode);
+    } else {
+      setCurrentEpisode(episodeMerch[0]);
     }
-    else {
-      setCurrentEpisode(episodeMerch[0])
-    }
-  }, [groupedEpisodes, id])
+  }, [groupedEpisodes, id]);
 
   useEffect(() => {
-    if (index > episodeList.length) {
-      setCurrentServerIndex(0)
-    }
-    else {
-      setCurrentServerIndex(index)
+    if (index > episodeList.length || !index) {
+      setCurrentServerIndex(0);
+    } else {
+      setCurrentServerIndex(index);
     }
     console.log("222222", index);
     console.log("333333", episodeList);
-  }, [index,episodeList])
+  }, [index, episodeList]);
   useEffect(() => {
-    if (groupIndex > groupedEpisodes.length) {
-      setCurrentGroupIndex(0)
+    if (groupIndex > groupedEpisodes.length || !groupIndex) {
+      setCurrentGroupIndex(0);
     } else {
       setCurrentGroupIndex(groupIndex);
     }
     console.log("555555", currentGroupIndex);
-
-  }, [groupIndex,groupedEpisodes])
-  useEffect(() => {
-
-  })
+  }, [groupIndex, groupedEpisodes]);
   if (!movieData) return <p className="text-center mt-10">Đang tải...</p>;
 
   const { movie, episodes } = movieData;
 
   const statusMap = {
-    "completed": "Đã hoàn thành",
-    "ongoing": "Đang phát sóng",
-    "upcoming": "Sắp ra mắt",
-    "cancelled": "Đã hủy"
+    completed: "Đã hoàn thành",
+    ongoing: "Đang phát sóng",
+    upcoming: "Sắp ra mắt",
+    cancelled: "Đã hủy",
   };
   const movieStatus = statusMap[movie.status] || "Đang cập nhật";
 
@@ -168,7 +158,9 @@ const WatchMovie = () => {
   return (
     <div className="p-4 mt-14 max-w-7xl mx-auto text-white">
       <div className="pb-6">
-        <h2 className="text-2xl font-bold gradient-text">Bạn Đang Xem Phim {movie?.name} {currentEpisode?.name}  </h2>
+        <h2 className="text-2xl font-bold gradient-text">
+          Bạn Đang Xem Phim {movie?.name} {currentEpisode?.name}{" "}
+        </h2>
       </div>
       {/* Video */}
       {currentEpisode ? (
@@ -209,10 +201,11 @@ const WatchMovie = () => {
                   onClick={() => handleChangeServer(index)}
                   className={`
             px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-200
-            ${currentServerIndex == index
-                      ? "bg-yellow-600 border-yellow-600 text-white shadow-lg transform scale-105"
-                      : "bg-transparent border-gray-500 text-gray-300 hover:border-yellow-400 hover:text-yellow-400"
-                    }
+            ${
+              currentServerIndex == index
+                ? "bg-yellow-600 border-yellow-600 text-white shadow-lg transform scale-105"
+                : "bg-transparent border-gray-500 text-gray-300 hover:border-yellow-400 hover:text-yellow-400"
+            }
           `}
                 >
                   {displayName}
@@ -231,19 +224,20 @@ const WatchMovie = () => {
               <button
                 key={groupIndex}
                 onClick={() => setCurrentGroupIndex(groupIndex)}
-                className={`px-3 py-1 rounded text-sm ${currentGroupIndex == groupIndex
-                  ? "!bg-yellow-600 text-white font-bold !hover:bg-yellow-900"
-                  : "bg-gray-600 text-white hover:bg-yellow-400"
-                  }`}
+                className={`px-3 py-1 rounded text-sm ${
+                  currentGroupIndex == groupIndex
+                    ? "!bg-yellow-600 text-white font-bold !hover:bg-yellow-900"
+                    : "bg-gray-600 text-white hover:bg-yellow-400"
+                }`}
               >
-                Tập {groupIndex * groupSize + 1} - {Math.min(
+                Tập {groupIndex * groupSize + 1} -{" "}
+                {Math.min(
                   (groupIndex + 1) * groupSize,
                   episodeList[currentServerIndex]?.server_data.length
                 )}
               </button>
             ))}
           </div>
-
 
           {/* Danh sách tập trong group hiện tại */}
           <h2 className="text-l mb-2 font-semibold">Tập hiện tại</h2>
@@ -252,19 +246,17 @@ const WatchMovie = () => {
               <button
                 key={index}
                 onClick={() => setCurrentEpisode(ep)}
-                className={`px-3 py-1 rounded text-sm bg-gray-500 ${currentEpisode?.name === ep.name
-                  ? "!bg-yellow-600 text-white font-bold"
-                  : "bg-gray-600 text-white hover:bg-yellow-400"
-                  }`}
+                className={`px-3 py-1 rounded text-sm bg-gray-500 ${
+                  currentEpisode?.name === ep.name
+                    ? "!bg-yellow-600 text-white font-bold"
+                    : "bg-gray-600 text-white hover:bg-yellow-400"
+                }`}
               >
                 {ep.name}
               </button>
             ))}
           </div>
-
         </div>
-
-
 
         {/* Nội dung */}
         <div>
@@ -280,7 +272,10 @@ const WatchMovie = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {tmdbActors.map((actor, index) => (
-                <div key={index} className="flex flex-col items-center text-center">
+                <div
+                  key={index}
+                  className="flex flex-col items-center text-center"
+                >
                   <img
                     src={actor.avatar_url}
                     alt={actor.name}
@@ -291,19 +286,9 @@ const WatchMovie = () => {
               ))}
             </div>
           )}
-
-
         </div>
-
-
-
       </div>
-
-
-
-
     </div>
-
   );
 };
 

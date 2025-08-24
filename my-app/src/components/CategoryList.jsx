@@ -25,41 +25,43 @@ const CategoryList = () => {
   }, []);
 
   return (
-    <div className="bg-gray-900 text-white m-auto">
-      <h2 className="text-2xl font-bold max-w-7xl mx-auto px-4 mb-4">
-        Bạn đang quan tâm gì?
-      </h2>
+    <div className="bg-gray-900 text-white">
+      <div className="mt-6 p-4 max-w-[1850px] mx-auto ">
+        <h2 className="text-2xl font-bold lg:px-4 inline text-gradient-secondary">
+          Bạn đang quan tâm gì?
+        </h2>
 
-      <div className="max-w-7xl mx-auto p-4">
-        <Swiper
-          modules={[ Pagination, Autoplay]}
-          spaceBetween={20}
-          slidesPerView={2}
-          autoplay ={{delay: 3000}}
-          breakpoints={{
-            640: { slidesPerView: 3 },
-            768: { slidesPerView: 4 },
-            1024: { slidesPerView: 6 },
-          }}
-        >
-          {categories.slice(0, 8).map((category, idx) => (
-            <SwiperSlide key={category.slug}>
-              <CategoryCard category={category} index={idx} />
-            </SwiperSlide>
-          ))}
+        <div className="lg:px-4 pt-4">
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            spaceBetween={20}
+            slidesPerView={2}
+            autoplay={{ delay: 3000 }}
+            breakpoints={{
+              640: { slidesPerView: 3 },
+              768: { slidesPerView: 4 },
+              1024: { slidesPerView: 7 },
+            }}
+          >
+            {categories.slice(0, 8).map((category, idx) => (
+              <SwiperSlide key={category.slug}>
+                <CategoryCard category={category} index={idx} />
+              </SwiperSlide>
+            ))}
 
-          {categories.length > 8 && (
-            <SwiperSlide>
-              <Link
-                to={"/chu-de"}
-                className="rounded-lg text-white p-4 cursor-pointer bg-gray-600 hover:opacity-80 transition h-full flex flex-col justify-center"
-              >
-                <h3 className="text-lg font-bold">Xem tất cả</h3>
-                <p className="text-sm mt-2">Khám phá thêm &rarr;</p>
-              </Link>
-            </SwiperSlide>
-          )}
-        </Swiper>
+            {categories.length > 8 && (
+              <SwiperSlide>
+                <Link
+                  to={"/chu-de"}
+                  className="rounded-lg text-white p-4 cursor-pointer bg-gray-600 hover:opacity-80 transition h-full flex flex-col justify-center"
+                >
+                  <h3 className="text-lg font-bold">Xem tất cả</h3>
+                  <p className="text-sm mt-2">Khám phá thêm &rarr;</p>
+                </Link>
+              </SwiperSlide>
+            )}
+          </Swiper>
+        </div>
       </div>
     </div>
   );

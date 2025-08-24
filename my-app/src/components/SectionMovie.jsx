@@ -15,7 +15,7 @@ const SectionMovie = ({
         640: { slidesPerView: 3 },
         768: { slidesPerView: 4 },
         1024: { slidesPerView: 5 },
-        1280: { slidesPerView: 5 },
+        1280: { slidesPerView: 6 },
     }, orientation = "vertical", limit = 16, page = 1
 }) => {
     const [movies, setMovies] = useState([]);
@@ -74,8 +74,8 @@ const SectionMovie = ({
     // if (!loading || movies.length === 0) return null;
 
     return (
-        <div className="bg-gray-900 w-full">
-            <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="bg-gray-900 max-w-[1850px] mx-auto lg:p-4">
+            <div className=" px-4 py-4">
                 <Link to={`/${describe}/${slug}`}>
                     <div className="flex justify-between mb-6">
                         <h2 className="text-2xl font-bold bg-clip-text " style={{ backgroundImage: gradients[index % gradients.length] }}>
