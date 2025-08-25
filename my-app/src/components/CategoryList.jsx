@@ -28,7 +28,7 @@ const CategoryList = () => {
     <div className="bg-gray-900 text-white">
       <div className="mt-6 p-4 max-w-[1850px] mx-auto ">
         <h2 className="text-2xl font-bold lg:px-4 inline text-gradient-secondary">
-          Bạn đang quan tâm gì?
+          Bạn Đang Quan Tâm Gì ?
         </h2>
 
         <div className="lg:px-4 pt-4">

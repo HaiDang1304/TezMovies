@@ -21,22 +21,6 @@ const SectionMovie = ({
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [nameMovie, setNameMovie] = useState("");
-    const gradients = [
-        "linear-gradient(135deg, #ff0080, #ff8c00)", // hồng → cam
-        "linear-gradient(135deg, #00f5a0, #00d9f5)", // xanh neon
-        "linear-gradient(135deg, #8a2be2, #ff00ff)", // tím → hồng neon
-        "linear-gradient(135deg, #ff4e50, #f9d423)", // đỏ → vàng
-        "linear-gradient(135deg, #00c6ff, #0072ff)", // xanh đậm → xanh nhạt
-        "linear-gradient(135deg, #f953c6, #b91d73)", // hồng đậm → tím
-        "linear-gradient(135deg, #ff9966, #ff5e62)", // cam → đỏ
-        "linear-gradient(135deg, #36d1dc, #5b86e5)", // xanh ngọc → xanh tím
-        "linear-gradient(135deg, #11998e, #38ef7d)", // xanh lục → xanh lá neon
-        "linear-gradient(135deg, #ee9ca7, #ffdde1)", // hồng pastel → trắng hồng
-        "linear-gradient(135deg, #fc6076, #ff9a44)", // đỏ hồng → cam vàng
-        "linear-gradient(135deg, #2980b9, #6dd5fa)", // xanh biển → xanh nhạt
-        "linear-gradient(135deg, #f7971e, #ffd200)"  // vàng cam → vàng tươi
-    ];
-
 
     useEffect(() => {
         // axios
@@ -78,7 +62,7 @@ const SectionMovie = ({
             <div className=" px-4 py-4">
                 <Link to={`/${describe}/${slug}`}>
                     <div className="flex justify-between mb-6">
-                        <h2 className="text-2xl font-bold bg-clip-text " style={{ backgroundImage: gradients[index % gradients.length] }}>
+                        <h2 className="text-2xl font-bold bg-clip-text text-gradient-moive ">
                             {title}
                         </h2>
                         <button className="text-white  font-medium text-md bg-gray-900 border border-white px-2 h-8 rounded-3xl hover:text-amber-300 hover:border-amber-300 ">Xem thêm </button>
@@ -108,6 +92,7 @@ const SectionMovie = ({
                                                 className=" transform group-hover:scale-105 group-hover:brightness-110 transition"
                                             />
                                         </div>
+                                        
                                         <div className="absolute top-2 left-2 flex flex-wrap gap-1">
                                             <span className="bg-black text-white text-xs  font-medium px-1 py-0.5 rounded">{movie.quality}</span>
                                             {movie.lang.split(/\s*\+\s*/).map((langItem, index) => (

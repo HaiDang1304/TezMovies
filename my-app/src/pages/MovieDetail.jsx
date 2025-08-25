@@ -43,7 +43,10 @@ const MovieDetail = () => {
 
         const tmdbId = res.data.movie?.tmdb?.id;
         const type = res.data.movie?.tmdb?.type;
-
+         if (tmdbId && type) {
+        const actors = await fetchTmdbActors(tmdbId, type);
+        setTmdbActors(actors);
+      }
 
       } catch (error) {
         console.error("Lỗi khi fetch dữ liệu:", error);
@@ -159,7 +162,7 @@ const MovieDetail = () => {
                 <h2 className="text-l mb-2 font-semibold">Tập hiện tại</h2>
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-6 gap-2 mb-4">
                   {groupedEpisodes[currentGroupIndex]?.map((ep, index) => (
-                    <Link className="" to={`/xem-phim/${slug}?id=${getIdLinkm3u8(ep.link_m3u8)}&index=${currentServerIndex}&groupIndex=${currentGroupIndex}`}>
+                    <Link className="" to={`/xem-phim/${slug}?id=${getIdLinkm3u8(ep.link_m3u8)}&index=${currentServerIndex}&groupIndex=${currentGroupIndex}`} key={index}>
 
                       <button
                         id={getIdLinkm3u8(ep.link_m3u8)}

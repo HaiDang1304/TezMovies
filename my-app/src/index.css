@@ -103,6 +103,41 @@ button:focus-visible {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.text-gradient-moive {
+  background: radial-gradient(
+      60% 130% at 80% -20%,
+      #f8f8f7 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(100deg, #f9f9ff 0%, #0eeee2 50%, #a44eff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-movieVN {
+  background: radial-gradient(
+      60% 130% at 80% -20%,
+      #f8f8f7 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(100deg, #d01818 0%, #d61c98 50%, #3026eb 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dot-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.dot-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.4) 0.9px, transparent 1px);
+  background-size: 2px 2px; /* chỉnh độ dày chấm */
+  pointer-events: none; /* không cản click */
+}
 
 
 @keyframes bars-loading {
