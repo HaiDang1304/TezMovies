@@ -127,8 +127,7 @@ const WatchMovie = () => {
     } else {
       setCurrentServerIndex(index);
     }
-    console.log("222222", index);
-    console.log("333333", episodeList);
+
   }, [index, episodeList]);
   useEffect(() => {
     if (groupIndex > groupedEpisodes.length || !groupIndex) {

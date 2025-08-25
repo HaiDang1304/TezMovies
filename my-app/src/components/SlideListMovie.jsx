@@ -59,7 +59,7 @@ const SlideListMovie = () => {
       >
         {movies?.map((movie, index) => (
           <SwiperSlide key={index}>
-            <div className="relative">
+            <div className="relative dot-overlay">
               <Image
                 orientation="custom"
                 rounded="none"

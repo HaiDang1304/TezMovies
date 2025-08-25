@@ -12,9 +12,10 @@ import SearchPage from "./pages/SearchPage";
 import NotFound from "./components/NotFound";
 import TopicPages from "./pages/TopicPages";
 import SlideListMovie from "./components/slideListMovie";
+import SlideVNMovie from "./components/SlideVNMovie";
+import SlideHQMovie from "./components/SlideHQMovie";
 
-const GOOGLE_CLIENT_ID =
-  "685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID ="685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
 
 const defaultSwiper = {
   0: { slidesPerView: 2 },
@@ -33,7 +34,7 @@ const SwiperSlide ={
 
 // Gom tất cả SectionMovie thành mảng
 const sectionComponents = [
-  <SectionMovie describe="quoc-gia" slug="viet-nam" orientation="horizontal" title="Phim Việt Nam" swiperResponsive={SwiperSlide}/>,
+  // <SectionMovie describe="quoc-gia" slug="viet-nam" orientation="horizontal" title="Phim Việt Nam" swiperResponsive={SwiperSlide}/>,
   <SectionMovie describe="quoc-gia" slug="trung-quoc" orientation="horizontal" title="Phim Trung Quốc" swiperResponsive={SwiperSlide} />,
   <SectionMovie describe="quoc-gia" slug="han-quoc" orientation="horizontal" title="Phim Hàn Quốc" swiperResponsive={SwiperSlide} />,
   <SectionMovie describe="the-loai" slug="hanh-dong" title="Hành Động Đỉnh Cao" swiperResponsive={defaultSwiper} />,
@@ -61,6 +62,8 @@ const App = () => (
                <SlideListMovie/>
                 {/* <MovieList /> */}
                 <CategoryList />
+                <SlideVNMovie/>
+                {/* <SlideHQMovie/> */}
                 {sectionComponents.map((Section, i) => (
                   <React.Fragment key={i}>{Section}</React.Fragment>
                 ))}
