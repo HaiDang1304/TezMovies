@@ -11,7 +11,7 @@ import CategoryDetail from "./pages/CategoryDetail";
 import SearchPage from "./pages/SearchPage";
 import NotFound from "./components/NotFound";
 import TopicPages from "./pages/TopicPages";
-import SlideListMovie from "./components/slideListMovie";
+import SlideListMovie from "./components/SlideListMovie";
 import SlideVNMovie from "./components/SlideVNMovie";
 import SlideHQMovie from "./components/SlideHQMovie";
 
