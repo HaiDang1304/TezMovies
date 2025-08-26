@@ -15,6 +15,8 @@ import SlideListMovie from "./components/SlideListMovie";
 import SlideVNMovie from "./components/SlideVNMovie";
 import SlideHQMovie from "./components/SlideHQMovie";
 
+
+
 const GOOGLE_CLIENT_ID ="685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
 
 const defaultSwiper = {
@@ -87,6 +89,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
 
           <Route path="/chu-de" element={<TopicPages />} />
+
         </Route>
       </Routes>
     </Router>

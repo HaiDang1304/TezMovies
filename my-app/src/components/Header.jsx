@@ -77,9 +77,10 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
         </div>
 
         <nav className="hidden md:flex items-center space-x-6 text-lg font-medium">
+          <a href="/" className="hover:underline !text-white">Trang chủ</a>
           <Link to={"/chu-de"} className="hover:underline !text-white">Chủ đề</Link>
-          <a href="#" className="hover:underline !text-white">Thể Loại</a>
-          <a href="#" className="hover:underline !text-white">Phim Mới</a>
+          
+          <Link to={"/danh-sach"} className="hover:underline !text-white">Danh mục</Link>
           <a href="#" className="hover:underline !text-white">Phim Hot</a>
         </nav>
 
