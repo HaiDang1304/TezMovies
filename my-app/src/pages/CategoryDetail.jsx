@@ -5,10 +5,13 @@ import Image from "../components/Image";
 import Loading from "../components/Loading";
 
 const CategoryDetail = () => {
-  const { slug, describe } = useParams();
+  const { describe, slug, type_list } = useParams();
+  // describe: "the-loai" | "quoc-gia"
+  // slug: slug của thể loại hoặc quốc gia
+  // type_list: ví dụ "phim-moi", "phim-le", "phim-bo"...
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1); // Cần kiểm tra từ API
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [nameMovie, setNameMovie] = useState("");
   const navigate = useNavigate();
@@ -16,15 +19,26 @@ const CategoryDetail = () => {
   useEffect(() => {
     setLoading(true);
 
+    let url = "";
+    if (type_list) {
+      // API dạng danh sách
+      url = `https://phimapi.com/v1/api/danh-sach/${type_list}?page=${page}&limit=24`;
+    } else if (describe && slug) {
+      // API dạng thể loại hoặc quốc gia
+      url = `https://phimapi.com/v1/api/${describe}/${slug}?page=${page}&limit=24`;
+    }
+
+    if (!url) return;
+
     axios
-      .get(`https://phimapi.com/v1/api/${describe}/${slug}?page=${page}&limit=24`)
+      .get(url)
       .then((res) => {
         console.log("API Response:", res.data); // Kiểm tra phản hồi
         const data = res.data.data;
         setMovies(data.items || []);
-        setNameMovie(data.titlePage)
+        setNameMovie(data.titlePage);
         // Kiểm tra trường totalPages hoặc số lượng phim tổng cộng
-        setTotalPages(data.params.pagination.totalPages)
+        setTotalPages(data.params.pagination.totalPages);
         setLoading(false);
       })
       .catch((err) => {
@@ -32,14 +46,12 @@ const CategoryDetail = () => {
         setMovies([]);
         setLoading(false);
       });
-    window.scrollTo({ top: 0, behavior: "smooth" })
-
-  }, [slug, page]);
-
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [slug, page, type_list, describe]);
 
   const handleClick = (slug) => {
     navigate(`/phim/${slug}`);
-  }
+  };
   const handlePrevPage = () => {
     if (page > 1) setPage((prev) => prev - 1);
   };
@@ -48,31 +60,35 @@ const CategoryDetail = () => {
     if (page < totalPages) setPage((prev) => prev + 1);
   };
 
-
-  if (loading)
-    return <Loading />
+  if (loading) return <Loading />;
   if (!movies || movies.length === 0) {
     return (
       <div className="items-center justify-center flex min-h-screen">
         <h1>Không có phim để Loading</h1>
-      </div>)
+      </div>
+    );
   }
-
 
   return (
     <div className="max-w-[1600px] mx-auto min-h-scree text-white px-4 sm:px-6 lg:px-20 py-12">
       <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4">{describe === "the-loai" ? "Thể loại : " : "Quốc gia : "} {nameMovie}</h2>
-
+        <h2 className="text-2xl font-bold mb-4">
+          {describe === "the-loai" ? "Thể loại : " : "Quốc gia : "} {nameMovie}
+        </h2>
 
         <>
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-5">
             {movies.map((movie, index) => (
-              <div key={index} className="bg-gray-800 text-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group">
+              <div
+                key={index}
+                className="bg-gray-800 text-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group"
+              >
                 <div className="overflow-hidden">
-                  <div key={movie._id}
+                  <div
+                    key={movie._id}
                     className="bg-gray-800 text-white rounded-lg cursor-pointer hover:opacity-80 transition"
-                    onClick={() => handleClick(movie.slug)}>
+                    onClick={() => handleClick(movie.slug)}
+                  >
                     <div className="relative transition-all duration-300">
                       {/* Poster phim */}
                       <Image
@@ -84,15 +100,17 @@ const CategoryDetail = () => {
 
                       {/* Badge góc trên trái */}
                       <div className="absolute top-2 left-2 hidden lg:flex flex-wrap gap-1">
-                        <span className="bg-black text-white text-xs  font-medium px-1 py-0.5 rounded">{movie.quality}</span>
+                        <span className="bg-black text-white text-xs  font-medium px-1 py-0.5 rounded">
+                          {movie.quality}
+                        </span>
                         {movie.lang.split(/\s*\+\s*/).map((langItem, index) => (
                           <span
                             key={index}
-                            className="bg-white text-black text-xs font-medium px-1 py-0.5 rounded mr-1">
+                            className="bg-white text-black text-xs font-medium px-1 py-0.5 rounded mr-1"
+                          >
                             {langItem}
                           </span>
                         ))}
-
                       </div>
 
                       {/* Badge tập phim (góc dưới giữa) */}
@@ -105,16 +123,14 @@ const CategoryDetail = () => {
 
                     {/* Tên phim */}
                     <h2 className="group-hover:text-yellow-400 overflow-hidden truncate whitespace-nowrap px-2 py-2">
-                      {movie?.name ? movie.name.replace(/<[^>]+>/g, "") : "Không tên"}
+                      {movie?.name
+                        ? movie.name.replace(/<[^>]+>/g, "")
+                        : "Không tên"}
                     </h2>
-
                   </div>
-
-
                 </div>
               </div>
             ))}
-
           </div>
 
           {/* Phân trang */}

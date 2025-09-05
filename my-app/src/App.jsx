@@ -82,6 +82,8 @@ const App = () => (
           {/* Trang thể loại */}
           <Route path=":describe/:slug" element={<CategoryDetail />} />
 
+          <Route path="/danh-sach/:type_list" element={<CategoryDetail />} />
+
           {/* Trang tìm kiếm */}
           <Route path="search" element={<SearchPage />} />
 

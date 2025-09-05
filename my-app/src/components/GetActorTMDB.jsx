@@ -55,9 +55,9 @@ export default function GetActorTMDB({
 
   if (variant === "carousel") {
     return (
-      <div>
+      <div className="justify-center items-center">
         <h2 className="text-lg mb-4 font-semibold mt-6">Danh sách diễn viên</h2>
-        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-4 gap-4 ">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 justify-items-center">
           {cast.map((actor) => (
             <div
               key={actor.id}
@@ -66,7 +66,7 @@ export default function GetActorTMDB({
               <img
                 src={actor.avatar_url}
                 alt={actor.name}
-                className="w-16 h-16 rounded-full object-cover mx-auto transform transition-transform duration-200 ease-out group-hover:scale-110"
+                className="w-12 h-12 rounded-full object-cover mx-auto transform transition-transform duration-200 ease-out group-hover:scale-110"
               />
               <p className="mt-1 text-xs text-white transition-colors duration-200 group-hover:text-amber-300">
                 {actor.name}

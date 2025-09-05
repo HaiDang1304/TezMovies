@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMagnifyingGlass,
+  faBars,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import ModalSearch from "./ModalSeacrch";
+import DropdownList from "./DropdownList";
+import DropdownCategory from "./DropdownCategory";
 
 const Header = ({ onLoginClick, onRegisterClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,28 +23,26 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
   const fetchUser = async () => {
     try {
       const res = await fetch("http://localhost:3000/auth/me", {
-        credentials: "include"
+        credentials: "include",
       });
       if (!res.ok) throw new Error("Not logged in");
 
       let data = await res.json();
       setUser(data);
     } catch (error) {
-     
       setUser(null);
     }
   };
 
-  
   const handleSearch = () => {
     setSearchTerm("");
-  }
-  
+  };
+
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:3000/auth/logout", {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
       });
       setUser(null);
       await fetchUser();
@@ -75,13 +79,15 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
           />
           <ModalSearch searchTerm={searchTerm} />
         </div>
-
         <nav className="hidden md:flex items-center space-x-6 text-lg font-medium">
-          <a href="/" className="hover:underline !text-white">Trang chủ</a>
-          <Link to={"/chu-de"} className="hover:underline !text-white">Chủ đề</Link>
-          
-          <Link to={"/danh-sach"} className="hover:underline !text-white">Danh mục</Link>
-          <a href="#" className="hover:underline !text-white">Phim Hot</a>
+          <a href="/" className="hover:underline !text-white">
+            Trang chủ
+          </a>
+          <Link to={"/chu-de"} className="hover:underline !text-white">
+            Chủ đề
+          </Link>
+          <DropdownList />
+          <DropdownCategory />
         </nav>
 
         {!user ? (
@@ -92,7 +98,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             >
               Đăng Nhập
             </button>
-            <button 
+            <button
               onClick={onRegisterClick}
               className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
             >
@@ -117,13 +123,20 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             </button>
           </div>
         )}
-
-        <button
-          className="md:hidden text-white text-xl"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} />
-        </button>
+        <div className="md:hidden flex flex-row gap-4">
+          <img
+            src={user?.avatar || "/default-avatar.avif"}
+            referrerPolicy="no-referrer"
+            alt={user?.name || "User avatar"}
+            className="w-10 h-10 rounded-full border"
+          />
+          <button
+            className="md:hidden text-white text-xl"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} />
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
@@ -149,10 +162,14 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
           </div>
 
           <nav className="flex flex-col space-y-2 text-lg">
-            <Link to={"/chu-de"} className="hover:underline !text-white">Chủ đề</Link>
-            <a href="#" className="hover:underline !text-white">Thể Loại</a>
-            <a href="#" className="hover:underline !text-white">Phim Mới</a>
-            <a href="#" className="hover:underline !text-white">Phim Hot</a>
+            <Link to={"/"} onClick={() => setMenuOpen(false)} className="hover:underline !text-white">
+              Trang chủ
+            </Link>
+            <Link to={"/chu-de"} onClick={() => setMenuOpen(false)} className="hover:underline !text-white">
+              Chủ đề
+            </Link>
+            <DropdownCategory onClick={() => setMenuOpen(false)} />
+            <DropdownList onClick={() => setMenuOpen(false)} />
           </nav>
 
           {!user ? (
@@ -166,7 +183,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
               >
                 Đăng Nhập
               </button>
-              <button 
+              <button
                 onClick={() => {
                   onRegisterClick();
                   setMenuOpen(false);
@@ -178,18 +195,6 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             </div>
           ) : (
             <div className="flex flex-col items-center space-y-2 mt-3">
-              <img
-                src={user?.avatar || "/default-avatar.avif"}
-                alt={user?.name || "User avatar"}
-                className="w-10 h-10 rounded-full border"
-                onError={(e) => {
-                  console.error("Avatar load failed for:", e.target.src);
-                  e.target.onerror = null;
-                  e.target.src = "/default-avatar.avif";
-                }}
-              />
-
-              <span>{user.name || "Unknown User"}</span>
               <button
                 onClick={handleLogout}
                 className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 w-full"

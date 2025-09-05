@@ -21,7 +21,26 @@ const Comment = ({ onSubmit }) => {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
-        <p className="text-sm text-gray-400 mt-2">{comment.length}/500 ký tự</p>
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-sm text-gray-400 mt-2">
+            {comment.length}/500 ký tự
+          </p>
+          <button className=" text-white rounded-lg flex items-center gap-2">
+            Gửi
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 512 512"
+              height="1.2em"
+              width="1.2em"
+              xmlns="http://www.w3.org/2000/svg"
+              className=""
+            >
+              <path d="M48 448l416-192L48 64v149.333L346 256 48 298.667z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
