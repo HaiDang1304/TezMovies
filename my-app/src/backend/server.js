@@ -1,107 +1,142 @@
-import express from 'express';
-import mysql from 'mysql2';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import session from 'express-session';
-import { OAuth2Client } from 'google-auth-library';
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// load .env từ root
+dotenv.config({ path: path.join(__dirname, "../../.env") });
+
+import express from "express";
+import cors from "cors";
+import connectDB from "./database.js";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import User from "./models/User.js";
+import session from "express-session";
 
 const app = express();
 
-app.use(cors({
-  origin: 'http://localhost:5173', // Chỉ định origin của React
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // Cho phép gửi cookie
-  optionsSuccessStatus: 200 // Đảm bảo phản hồi OPTIONS thành công
-}));
+// Load biến môi trường
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+// Basic CORS setup
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
+);
 
-// Session
-app.use(session({
-  secret: 'secret-key', // đổi thành chuỗi bảo mật
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false } // để true nếu dùng HTTPS
-}));
+app.use(express.json());
 
-// Google OAuth Client ID
-const CLIENT_ID = '685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com';
-const client = new OAuth2Client(CLIENT_ID);
+// Session config
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // true khi deploy
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    },
+  })
+);
 
-// MySQL connection
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'tezmovies'
-});
-db.connect(err => {
-  if (err) throw err;
-  console.log('✅ MySQL Connected...');
-});
+app.use(passport.initialize());
+app.use(passport.session());
 
-// Xử lý preflight request
-app.options('/auth/google', cors());
-
-// API Google Login
-app.post('/auth/google', async (req, res) => {
-  const { token } = req.body;
-
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: CLIENT_ID
-    });
-
-    const payload = ticket.getPayload();
-    const { sub, email, name, picture } = payload;
-
-    // Lưu hoặc cập nhật user
-    const sql = `
-      INSERT INTO users (google_id, name, email, avatar) 
-      VALUES (?, ?, ?, ?) 
-      ON DUPLICATE KEY UPDATE name=?, email=?, avatar=?`;
-    db.query(sql, [sub, name, email, picture, name, email, picture], (err) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Database error' });
-      }
-
-      // Lưu session user_id
-      req.session.user_id = sub;
-
-      res.json({ message: 'Login success' });
-    });
-
-  } catch (error) {
-    console.error('Google Auth Error:', error);
-    res.status(401).json({ message: 'Invalid token' });
+// User info route
+app.get("/api/user", (req, res) => {
+  if (req.user) {
+    res.json({ user: req.user });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
 
-// API lấy thông tin user từ session
-app.get('/auth/me', (req, res) => {
-  if (!req.session.user_id) {
-    return res.status(401).json({ message: 'Not logged in' });
-  }
-
-  db.query('SELECT name, email, avatar FROM users WHERE google_id = ?',
-    [req.session.user_id], (err, results) => {
-      if (err) return res.status(500).json({ message: 'Database error' });
-
-      if (results.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      res.json(results[0]);
+// Logout route
+app.post("/auth/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) return res.status(500).json({ message: "Logout failed" });
+    req.session.destroy((err) => {
+      if (err)
+        return res.status(500).json({ message: "Session destroy failed" });
+      res.clearCookie("connect.sid");
+      res.status(200).json({ message: "Logged out successfully" });
     });
-});
-
-// API Logout
-app.post('/auth/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.json({ message: 'Logged out' });
   });
 });
 
-app.listen(3000, () => console.log('🚀 Server running on port 3000'));  
+// Passport Google setup
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+          user = await User.create({
+            googleId: profile.id,
+            email: profile.emails[0].value,
+            name: profile.displayName,
+            picture: profile.photos[0].value,
+          });
+          console.log("✅ User created:", user);
+        } else {
+          console.log("ℹ️ User already exists:", user.email);
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+
+// Google auth routes
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.redirect(FRONTEND_URL);
+  }
+);
+
+// Test route
+app.get("/", (req, res) => {
+  res.json({ message: "Server is running!" });
+});
+
+// Connect DB
+connectDB();
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

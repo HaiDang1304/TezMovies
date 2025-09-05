@@ -18,18 +18,21 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, []); // Chỉ chạy một lần khi component mount
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("http://localhost:3000/auth/me", {
-        credentials: "include",
+      const res = await fetch("http://localhost:3000/api/user", {
+        credentials: "include", // Gửi cookie session
       });
-      if (!res.ok) throw new Error("Not logged in");
-
-      let data = await res.json();
-      setUser(data);
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user || null); // Lấy user từ response
+      } else {
+        setUser(null); // Nếu không authenticated
+      }
     } catch (error) {
+      console.error("Error fetching user:", error);
       setUser(null);
     }
   };
@@ -40,12 +43,25 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/auth/logout", {
+      const res = await fetch("http://localhost:3000/auth/logout", {
         method: "POST",
         credentials: "include",
       });
-      setUser(null);
-      await fetchUser();
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Logout response:", data);
+        setUser(null);
+        await fetchUser();
+        window.location.reload();
+      } else {
+        const text = await res.text(); // Lấy text để debug
+        console.error(
+          "Logout failed with status:",
+          res.status,
+          "Response:",
+          text
+        );
+      }
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -108,12 +124,11 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
         ) : (
           <div className="hidden md:flex items-center space-x-3">
             <img
-              src={user?.avatar || "/default-avatar.avif"}
+              src={user?.picture || "/default-avatar.avif"} // Sử dụng user.picture thay vì user.avatar
               referrerPolicy="no-referrer"
               alt={user?.name || "User avatar"}
               className="w-10 h-10 rounded-full border"
             />
-
             <span>{user.name || "Unknown User"}</span>
             <button
               onClick={handleLogout}
@@ -124,12 +139,14 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
           </div>
         )}
         <div className="md:hidden flex flex-row gap-4">
-          <img
-            src={user?.avatar || "/default-avatar.avif"}
-            referrerPolicy="no-referrer"
-            alt={user?.name || "User avatar"}
-            className="w-10 h-10 rounded-full border"
-          />
+          {user && (
+            <img
+              src={user.picture || "/default-avatar.avif"}
+              referrerPolicy="no-referrer"
+              alt={user.name || "User avatar"}
+              className="w-10 h-10 rounded-full border"
+            />
+          )}
           <button
             className="md:hidden text-white text-xl"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -162,10 +179,18 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
           </div>
 
           <nav className="flex flex-col space-y-2 text-lg">
-            <Link to={"/"} onClick={() => setMenuOpen(false)} className="hover:underline !text-white">
+            <Link
+              to={"/"}
+              onClick={() => setMenuOpen(false)}
+              className="hover:underline !text-white"
+            >
               Trang chủ
             </Link>
-            <Link to={"/chu-de"} onClick={() => setMenuOpen(false)} className="hover:underline !text-white">
+            <Link
+              to={"/chu-de"}
+              onClick={() => setMenuOpen(false)}
+              className="hover:underline !text-white"
+            >
               Chủ đề
             </Link>
             <DropdownCategory onClick={() => setMenuOpen(false)} />
