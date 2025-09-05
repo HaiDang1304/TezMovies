@@ -264,7 +264,7 @@ const MovieDetail = () => {
             <div className="lg:col-span-8 col-span-12 bg-gradient-to-b from-gray-800 rounded-2xl px-6 py-4">
               <div className="flex gap-6 md:flex-row flex-col md:justify-start md:gap-6 justify-center md:items-start items-center css-0">
                 <button
-                  className="px-4 py-2 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 rounded text-white min-w-[200px] md:min-w-[100px] rounded-4xl"
+                  className="px-4 py-2 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 rounded text-white min-w-[200px] md:min-w-[100px] rounded-4xl"
                   onClick={() =>
                     navigate(`/xem-phim/${slug}?tap=${episodeList?.[0]?.name}`)
                   }
