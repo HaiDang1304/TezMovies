@@ -22,7 +22,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/user", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user`, {
         credentials: "include", // Gửi cookie session
       });
       if (res.ok) {
@@ -43,7 +43,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:3000/auth/logout", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -54,7 +54,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
         await fetchUser();
         window.location.reload();
       } else {
-        const text = await res.text(); // Lấy text để debug
+        const text = await res.text();
         console.error(
           "Logout failed with status:",
           res.status,
