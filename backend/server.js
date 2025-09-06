@@ -40,14 +40,31 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Session config
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET || "your-secret-key",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       secure: process.env.NODE_ENV === "production",
+//       httpOnly: true,
+//       sameSite: "none",
+//     },
+//   })
+// );
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-secret-key",
+    secret: process.env.SESSION_SECRET,
+    store: myStore,
     resave: false,
+    proxy: true,
     saveUninitialized: false,
+    expiration: 360,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      maxAge: 300 * 1000,
       httpOnly: true,
+      secure: true,
       sameSite: "none",
     },
   })
