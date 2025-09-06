@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 // CORS setup
 const corsOptions = {
   origin: (origin, callback) => {
-    const allowedOrigins = [FRONTEND_URL, 'http://localhost:5173'];
+    const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://tez-movies.vercel.app'];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
