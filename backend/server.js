@@ -1,20 +1,20 @@
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import express from 'express';
-import cors from 'cors';
-import connectDB from './database.js';
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User from './models/User.js';
-import session from 'express-session';
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import path from "path";
+import express from "express";
+import cors from "cors";
+import connectDB from "./database.js";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import User from "./models/User.js";
+import session from "express-session";
 
 dotenv.config();
 
 const app = express();
 
 // Load biến môi trường
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const PORT = process.env.PORT || 3000;
 
 // CORS setup
@@ -27,6 +27,9 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  // origin: "http://localhost:5173", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -36,12 +39,12 @@ app.use(express.json());
 // Session config
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: true,
     },
   })
@@ -56,7 +59,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback', // Render sẽ tự động thêm domain
+      callbackURL: "/auth/google/callback", // Render sẽ tự động thêm domain
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -68,9 +71,9 @@ passport.use(
             name: profile.displayName,
             picture: profile.photos[0].value,
           });
-          console.log('✅ User created:', user);
+          console.log("✅ User created:", user);
         } else {
-          console.log('ℹ️ User already exists:', user.email);
+          console.log("ℹ️ User already exists:", user.email);
         }
         return done(null, user);
       } catch (err) {
@@ -94,40 +97,44 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Google auth routes
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
 app.get(
-  '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect(FRONTEND_URL);
   }
 );
 
 // User info route
-app.get('/api/user', (req, res) => {
+app.get("/api/user", (req, res) => {
   if (req.user) {
     res.json({ user: req.user });
   } else {
-    res.status(401).json({ message: 'Unauthorized' });
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
 
 // Logout route
-app.post('/auth/logout', (req, res) => {
+app.post("/auth/logout", (req, res) => {
   req.logout((err) => {
-    if (err) return res.status(500).json({ message: 'Logout failed' });
+    if (err) return res.status(500).json({ message: "Logout failed" });
     req.session.destroy((err) => {
-      if (err) return res.status(500).json({ message: 'Session destroy failed' });
-      res.clearCookie('connect.sid');
-      res.status(200).json({ message: 'Logged out successfully' });
+      if (err)
+        return res.status(500).json({ message: "Session destroy failed" });
+      res.clearCookie("connect.sid");
+      res.status(200).json({ message: "Logged out successfully" });
     });
   });
 });
 
 // Test route
-app.get('/', (req, res) => {
-  res.json({ message: 'Server is running!' });
+app.get("/", (req, res) => {
+  res.json({ message: "Server is running!" });
 });
 
 // Connect DB
