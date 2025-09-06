@@ -20,14 +20,17 @@ const PORT = process.env.PORT || 3000;
 // CORS setup
 const corsOptions = {
   origin: (origin, callback) => {
-    const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://tez-movies.vercel.app'];
+    const allowedOrigins = [
+      process.env.FRONTEND_URL || "http://localhost:5173",
+      "https://tez-movies.vercel.app",
+    ];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  // origin: "http://localhost:5173", 
+  // origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -59,7 +62,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback", // Render sẽ tự động thêm domain
+      callbackURL: process.env.GOOGLE_APP_CALLBACK,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
