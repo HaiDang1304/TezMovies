@@ -1,35 +1,17 @@
 import React from "react";
-import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
 
 const GoogleLoginButton = ({ onLoginSuccess }) => {
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      // Gửi token về backend để xác thực
-      fetch(`${process.env.REACT_APP_API_URL}/auth/google/callback`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: tokenResponse.code }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.user) {
-            onLoginSuccess(data.user); // Truyền user lên component cha
-          } else {
-            console.error("Login failed:", data.message);
-          }
-        })
-        .catch((error) => console.error("Error:", error));
-    },
-    onError: (error) => console.error("Login Failed:", error),
-    flow: "auth-code", // Sử dụng flow auth code để lấy code từ Google
-  });
+  const handleLoginClick = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
 
   return (
-    <GoogleOAuthProvider clientId="685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <div className="w-full">
         <button
-          onClick={() => login()}
+          onClick={handleLoginClick}
           className="flex items-center justify-center gap-3 bg-white text-gray-700 font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-lg hover:bg-gray-50 transition-all duration-200 w-full cursor-pointer"
         >
           <svg
