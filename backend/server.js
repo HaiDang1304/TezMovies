@@ -56,7 +56,6 @@ app.use(express.json());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    store: myStore,
     resave: false,
     proxy: true,
     saveUninitialized: false,
