@@ -4,7 +4,7 @@ import { FaGoogle } from "react-icons/fa";
 
 const GoogleLoginButton = ({ onLoginSuccess }) => {
   const handleLoginClick = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google?prompt=select_account`;
   };
 
   return (
