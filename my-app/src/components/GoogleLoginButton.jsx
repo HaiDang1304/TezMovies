@@ -54,14 +54,11 @@ const GoogleLoginButton = ({ onLoginSuccess }) => {
   const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
 
   const handleLoginClick = () => {
-    // Use different endpoint for mobile
-    const authUrl = isMobile 
-      ? `${import.meta.env.VITE_API_URL}/auth/google/mobile`
-      : `${import.meta.env.VITE_API_URL}/auth/google`;
-    
-    console.log(`🔄 Redirecting to: ${authUrl} (${isMobile ? 'Mobile' : 'Desktop'})`);
-    window.location.href = authUrl;
-  };
+  const authUrl = `${import.meta.env.VITE_API_URL}/auth/google?prompt=select_account`;
+  console.log(`🔄 Redirecting to: ${authUrl}`);
+  window.location.href = authUrl;
+};
+
 
   // Enhanced user check for mobile
   const checkUserAuth = async () => {

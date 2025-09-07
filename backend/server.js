@@ -390,6 +390,10 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+if (isProduction) {
+  app.set("trust proxy", 1); // tin tưởng proxy đầu tiên (Render)
+}
+
 // Session config - Điều kiện theo môi trường
 app.use(
   session({
