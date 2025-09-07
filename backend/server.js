@@ -175,7 +175,8 @@ import User from "./models/User.js";
 import session from "express-session";
 
 // Load đúng file .env theo môi trường
-const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+const envFile =
+  process.env.NODE_ENV === "production" ? ".env.production" : ".env";
 dotenv.config({ path: envFile });
 
 console.log(`🔧 Loading environment from: ${envFile}`);
@@ -234,12 +235,19 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: isProduction 
-        ? process.env.GOOGLE_APP_CALLBACK_PROD 
+      callbackURL: isProduction
+        ? process.env.GOOGLE_APP_CALLBACK_PROD
         : process.env.GOOGLE_APP_CALLBACK_DEV,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log(
+          "GOOGLE CALLBACK URL ->",
+          isProduction
+            ? process.env.GOOGLE_APP_CALLBACK_PROD
+            : process.env.GOOGLE_APP_CALLBACK_DEV
+        );
+
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
           user = await User.create({
@@ -276,9 +284,9 @@ passport.deserializeUser(async (id, done) => {
 // Google auth routes
 app.get(
   "/auth/google",
-  passport.authenticate("google", { 
+  passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "select_account" // Luôn hiển thị màn hình chọn tài khoản
+    prompt: "select_account", // Luôn hiển thị màn hình chọn tài khoản
   })
 );
 
@@ -286,7 +294,11 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    console.log(`✅ Authentication successful in ${isProduction ? 'production' : 'development'}`);
+    console.log(
+      `✅ Authentication successful in ${
+        isProduction ? "production" : "development"
+      }`
+    );
     res.redirect(FRONTEND_URL);
   }
 );
@@ -315,9 +327,9 @@ app.post("/auth/logout", (req, res) => {
 
 // Test route
 app.get("/", (req, res) => {
-  res.json({ 
+  res.json({
     message: "Server is running!",
-    environment: isProduction ? "production" : "development"
+    environment: isProduction ? "production" : "development",
   });
 });
 
@@ -326,5 +338,9 @@ connectDB();
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} (${isProduction ? 'production' : 'development'})`);
+  console.log(
+    `🚀 Server running on port ${PORT} (${
+      isProduction ? "production" : "development"
+    })`
+  );
 });
