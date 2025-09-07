@@ -174,7 +174,11 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "./models/User.js";
 import session from "express-session";
 
-dotenv.config();
+// Load đúng file .env theo môi trường
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+dotenv.config({ path: envFile });
+
+console.log(`🔧 Loading environment from: ${envFile}`);
 
 const app = express();
 
