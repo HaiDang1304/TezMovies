@@ -356,7 +356,8 @@ import User from "./models/User.js";
 import session from "express-session";
 
 // Load đúng file .env theo môi trường
-const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
+const envFile =
+  process.env.NODE_ENV === "production" ? ".env.production" : ".env";
 dotenv.config({ path: envFile });
 console.log(`🔧 Loading environment from: ${envFile}`);
 
@@ -409,8 +410,10 @@ app.use(
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24h
       httpOnly: true,
-      secure: isProduction,
-      sameSite: "none",
+      // secure: isProduction,
+      // sameSite: isProduction ? "none" : "lax",
+      secure: true, // BẮT BUỘC khi SameSite=None
+      sameSite: "none", // Để cross-domain cookie hoạt động
     },
   })
 );
@@ -474,7 +477,11 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    console.log(`✅ Authentication successful in ${isProduction ? "production" : "development"}`);
+    console.log(
+      `✅ Authentication successful in ${
+        isProduction ? "production" : "development"
+      }`
+    );
     res.redirect(`${FRONTEND_URL}?auth=success`);
   }
 );
@@ -504,7 +511,8 @@ app.post("/auth/logout", (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ message: "Logout failed" });
     req.session.destroy((err) => {
-      if (err) return res.status(500).json({ message: "Session destroy failed" });
+      if (err)
+        return res.status(500).json({ message: "Session destroy failed" });
       res.clearCookie("connect.sid");
       res.status(200).json({ message: "Logged out successfully" });
     });
@@ -513,15 +521,18 @@ app.post("/auth/logout", (req, res) => {
 
 // Test route
 app.get("/", (req, res) => {
-  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(
-    req.get("User-Agent")
-  );
+  const isMobile =
+    /Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(
+      req.get("User-Agent")
+    );
 
   res.json({
     message: "Server is running!",
     environment: isProduction ? "production" : "development",
     callbackURL: getCallbackURL(),
-    hasGoogleCredentials: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
+    hasGoogleCredentials: !!(
+      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ),
     userAgent: req.get("User-Agent"),
     isMobile: isMobile,
     sessionID: req.sessionID,
@@ -534,5 +545,9 @@ connectDB();
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} (${isProduction ? "production" : "development"})`);
+  console.log(
+    `🚀 Server running on port ${PORT} (${
+      isProduction ? "production" : "development"
+    })`
+  );
 });
