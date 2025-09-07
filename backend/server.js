@@ -410,7 +410,7 @@ app.use(
       maxAge: 24 * 60 * 60 * 1000, // 24h
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      sameSite: "none",
     },
   })
 );
