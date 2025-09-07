@@ -475,7 +475,7 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     console.log(`✅ Authentication successful in ${isProduction ? "production" : "development"}`);
-    res.redirect(FRONTEND_URL);
+    res.redirect(`${FRONTEND_URL}?auth=success`);
   }
 );
 
