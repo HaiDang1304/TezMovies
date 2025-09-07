@@ -356,17 +356,23 @@ import User from "./models/User.js";
 import session from "express-session";
 
 // Load đúng file .env theo môi trường
-const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
 dotenv.config({ path: envFile });
-
 console.log(`🔧 Loading environment from: ${envFile}`);
 
 const app = express();
 
-// Load biến môi trường
+// Biến môi trường
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === "production";
+
+// Helper: Callback URL cho Google OAuth
+function getCallbackURL() {
+  return isProduction
+    ? process.env.GOOGLE_APP_CALLBACK_PROD
+    : process.env.GOOGLE_APP_CALLBACK_DEV;
+}
 
 // CORS setup
 const corsOptions = {
@@ -374,9 +380,9 @@ const corsOptions = {
     const allowedOrigins = [
       process.env.FRONTEND_URL || "http://localhost:5173",
       "https://tez-movies.vercel.app",
-      "http://localhost:5173", // Always allow localhost for development
+      "http://localhost:5173", // Luôn cho phép local dev
     ];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -387,25 +393,24 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cors(corsOptions));
-
 app.use(express.json());
 
 if (isProduction) {
-  app.set("trust proxy", 1); // tin tưởng proxy đầu tiên (Render)
+  app.set("trust proxy", 1); // Render/Heroku cần trust proxy
 }
 
-// Session config - Điều kiện theo môi trường
+// Session config
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
-    proxy: isProduction, // Chỉ true khi production
+    proxy: isProduction,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 24 * 60 * 60 * 1000, // 24h
       httpOnly: true,
-      secure: isProduction, // true khi production (HTTPS), false khi development (HTTP)
-      sameSite: isProduction ? "none" : "lax", // "none" cho production, "lax" cho development
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     },
   })
 );
@@ -413,15 +418,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport Google setup - Callback URL theo môi trường
+// Passport Google setup
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: isProduction 
-        ? process.env.GOOGLE_APP_CALLBACK_PROD 
-        : process.env.GOOGLE_APP_CALLBACK_DEV,
+      callbackURL: getCallbackURL(),
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -433,7 +436,7 @@ passport.use(
             name: profile.displayName,
             picture: profile.photos[0].value,
           });
-          console.log("✅ User created:", user);
+          console.log("✅ User created:", user.email);
         } else {
           console.log("ℹ️ User already exists:", user.email);
         }
@@ -461,9 +464,9 @@ passport.deserializeUser(async (id, done) => {
 // Google auth routes
 app.get(
   "/auth/google",
-  passport.authenticate("google", { 
+  passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "select_account" // Luôn hiển thị màn hình chọn tài khoản
+    prompt: "select_account", // luôn hiển thị chọn tài khoản
   })
 );
 
@@ -471,29 +474,27 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    console.log(`✅ Authentication successful in ${isProduction ? 'production' : 'development'}`);
+    console.log(`✅ Authentication successful in ${isProduction ? "production" : "development"}`);
     res.redirect(FRONTEND_URL);
   }
 );
 
 // User info route
 app.get("/api/user", (req, res) => {
-  console.log('🔍 /api/user called');
-  console.log('🔍 Session ID:', req.sessionID);
-  console.log('🔍 Session data:', req.session);
-  console.log('🔍 User:', req.user);
-  console.log('🔍 Cookies:', req.headers.cookie);
-  
+  console.log("🔍 /api/user called");
+  console.log("🔍 Session ID:", req.sessionID);
+  console.log("🔍 User:", req.user);
+
   if (req.user) {
     res.json({ user: req.user });
   } else {
-    res.status(401).json({ 
+    res.status(401).json({
       message: "Unauthorized",
       debug: {
         sessionID: req.sessionID,
         hasSession: !!req.session,
-        environment: process.env.NODE_ENV
-      }
+        environment: process.env.NODE_ENV,
+      },
     });
   }
 });
@@ -503,8 +504,7 @@ app.post("/auth/logout", (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ message: "Logout failed" });
     req.session.destroy((err) => {
-      if (err)
-        return res.status(500).json({ message: "Session destroy failed" });
+      if (err) return res.status(500).json({ message: "Session destroy failed" });
       res.clearCookie("connect.sid");
       res.status(200).json({ message: "Logged out successfully" });
     });
@@ -513,24 +513,26 @@ app.post("/auth/logout", (req, res) => {
 
 // Test route
 app.get("/", (req, res) => {
-  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(req.get('User-Agent'));
-  
-  res.json({ 
+  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(
+    req.get("User-Agent")
+  );
+
+  res.json({
     message: "Server is running!",
     environment: isProduction ? "production" : "development",
     callbackURL: getCallbackURL(),
     hasGoogleCredentials: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
-    userAgent: req.get('User-Agent'),
+    userAgent: req.get("User-Agent"),
     isMobile: isMobile,
     sessionID: req.sessionID,
-    hasUser: !!req.user
+    hasUser: !!req.user,
   });
 });
 
-// Connect DB
+// Kết nối DB
 connectDB();
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} (${isProduction ? 'production' : 'development'})`);
+  console.log(`🚀 Server running on port ${PORT} (${isProduction ? "production" : "development"})`);
 });
