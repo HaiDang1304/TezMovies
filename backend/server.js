@@ -240,14 +240,14 @@ passport.use(
         : process.env.GOOGLE_APP_CALLBACK_DEV,
     },
     async (accessToken, refreshToken, profile, done) => {
-      try {
-        console.log(
-          "GOOGLE CALLBACK URL ->",
-          isProduction
-            ? process.env.GOOGLE_APP_CALLBACK_PROD
-            : process.env.GOOGLE_APP_CALLBACK_DEV
-        );
+      console.log(
+        "GOOGLE CALLBACK URL ->",
+        isProduction
+          ? process.env.GOOGLE_APP_CALLBACK_PROD
+          : process.env.GOOGLE_APP_CALLBACK_DEV
+      );
 
+      try {
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
           user = await User.create({
