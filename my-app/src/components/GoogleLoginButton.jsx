@@ -96,7 +96,7 @@ const GoogleLoginButton = ({ onLoginSuccess }) => {
         checkUserAuth();
         // Clean URL after processing
         window.history.replaceState({}, document.title, window.location.pathname);
-      }, isMobile ? 2000 : 1000);
+      }, isMobile ? 3000 : 4000);
     }
   }, []);
 
