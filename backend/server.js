@@ -422,7 +422,7 @@ app.use(
       httpOnly: true,
       secure: isProduction, // chỉ HTTPS khi production
       sameSite: isProduction ? "none" : "lax", // cho phép cross-site cookies
-      domain: isProduction ? undefined : undefined, // không set domain cụ thể
+      domain: isProduction ? ".tezmovies.onrender.com" : undefined, // không set domain cụ thể
       path: "/"
     },
     name: "connect.sid", // explicit session name
