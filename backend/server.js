@@ -384,7 +384,6 @@ const isProduction = process.env.NODE_ENV === "production";
 const FRONTEND_URL = isProduction
   ? "https://tez-movies.vercel.app"
   : "http://localhost:5173";
-const COOKIE_DOMAIN = isProduction ? "tez-movies.vercel.app" : "localhost";
 
 // --- Helper callback URL cho Google OAuth ---
 const getCallbackURL = () =>
@@ -394,16 +393,20 @@ const getCallbackURL = () =>
 
 // --- Middleware ---
 app.use(express.json());
-if (isProduction) app.set("trust proxy", 1);
+app.set("trust proxy", 1); 
 
+// CORS configuration với cải thiện cho mobile
 app.use(
   cors({
-    origin: FRONTEND_URL,
-    credentials: true, // bắt buộc gửi cookie
+    origin: [FRONTEND_URL, "https://tez-movies.vercel.app"], // Thêm explicit domain
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    optionsSuccessStatus: 200 // for legacy browser support
   })
 );
 
-// --- Session với MongoStore ---
+// --- Session với MongoStore - Cải thiện cho mobile ---
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
@@ -411,16 +414,19 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 24 * 60 * 60,
+      ttl: 24 * 60 * 60, // 24 hours
+      touchAfter: 24 * 3600 // lazy session update
     }),
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, 
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
       httpOnly: true,
-      secure: isProduction,       // HTTPS bắt buộc trên production
-      sameSite: isProduction ? "none" : "lax",
-      domain: COOKIE_DOMAIN,      // quan trọng cho mobile cross-domain
-      path: "/",
+      secure: isProduction, // chỉ HTTPS khi production
+      sameSite: isProduction ? "none" : "lax", // cho phép cross-site cookies
+      domain: isProduction ? undefined : undefined, // không set domain cụ thể
+      path: "/"
     },
+    name: "connect.sid", // explicit session name
+    rolling: true // reset expiration on each request
   })
 );
 
@@ -470,41 +476,97 @@ passport.deserializeUser(async (id, done) => {
 // --- Auth routes ---
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account" })
+  passport.authenticate("google", { 
+    scope: ["profile", "email"], 
+    prompt: "select_account",
+    accessType: 'offline' // để có refresh token
+  })
 );
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: FRONTEND_URL }),
-  (req, res) => {
+  passport.authenticate("google", { failureRedirect: `${FRONTEND_URL}?auth=failed` }),
+  async (req, res) => {
     console.log(`✅ Authentication successful in ${isProduction ? "production" : "development"}`);
-    res.redirect(`${FRONTEND_URL}?auth=success`);
+    console.log(`👤 User ID: ${req.user._id}`);
+    console.log(`🍪 Session ID: ${req.sessionID}`);
+    
+    // Force save session trước khi redirect (quan trọng cho mobile)
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+        return res.redirect(`${FRONTEND_URL}?auth=failed`);
+      }
+      console.log('✅ Session saved successfully');
+      
+      // Redirect với delay nhỏ cho mobile
+      setTimeout(() => {
+        res.redirect(`${FRONTEND_URL}?auth=success&t=${Date.now()}`);
+      }, 100);
+    });
   }
 );
 
-// --- User info ---
+// --- User info with enhanced logging ---
 app.get("/api/user", (req, res) => {
-  console.log("🔍 /api/user called | Session:", req.sessionID);
+  console.log("🔍 /api/user called");
+  console.log(`📱 User Agent: ${req.get('User-Agent')}`);
+  console.log(`🍪 Session ID: ${req.sessionID}`);
+  console.log(`👤 Has User: ${!!req.user}`);
+  console.log(`🔒 Session Data:`, Object.keys(req.session));
+  
   if (req.user) {
-    res.json({ user: req.user });
+    console.log(`✅ User found: ${req.user.email}`);
+    res.json({ 
+      user: req.user,
+      sessionId: req.sessionID,
+      authenticated: true
+    });
   } else {
-    res.status(401).json({ message: "Unauthorized", sessionID: req.sessionID });
+    console.log(`❌ No user in session`);
+    res.status(401).json({ 
+      message: "Unauthorized", 
+      sessionID: req.sessionID,
+      authenticated: false
+    });
   }
+});
+
+// --- Health check route ---
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    environment: isProduction ? "production" : "development",
+    hasSession: !!req.sessionID,
+    hasUser: !!req.user,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // --- Logout ---
 app.post("/auth/logout", (req, res) => {
+  console.log(`🔄 Logout attempt for session: ${req.sessionID}`);
+  
   req.logout((err) => {
-    if (err) return res.status(500).json({ message: "Logout failed" });
+    if (err) {
+      console.error('❌ Logout error:', err);
+      return res.status(500).json({ message: "Logout failed" });
+    }
+    
     req.session.destroy((err) => {
-      if (err) return res.status(500).json({ message: "Session destroy failed" });
+      if (err) {
+        console.error('❌ Session destroy error:', err);
+        return res.status(500).json({ message: "Session destroy failed" });
+      }
+      
       res.clearCookie("connect.sid", {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
-        domain: COOKIE_DOMAIN,
-        path: "/",
+        path: "/"
       });
+      
+      console.log('✅ Logged out successfully');
       res.status(200).json({ message: "Logged out successfully" });
     });
   });
@@ -518,6 +580,8 @@ app.get("/", (req, res) => {
     callbackURL: getCallbackURL(),
     sessionID: req.sessionID,
     hasUser: !!req.user,
+    userAgent: req.get('User-Agent'),
+    isMobile: /Mobile|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(req.get('User-Agent'))
   });
 });
 
