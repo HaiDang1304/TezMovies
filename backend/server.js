@@ -416,6 +416,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     proxy: isProduction,
+    rolling: false, 
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       ttl: 24 * 60 * 60, // 1 ngày
@@ -425,6 +426,7 @@ app.use(
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
+      path: '/',
     },
   })
 );
