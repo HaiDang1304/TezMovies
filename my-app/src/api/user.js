@@ -5,7 +5,7 @@ export async function getUser() {
     method: "GET",
     credentials: "include", // bắt buộc để gửi cookie session
   });
-  if (!res.ok) {
+  if (!res.ok) {  
     throw new Error("Không thể lấy thông tin user");
   }
   return res.json();
