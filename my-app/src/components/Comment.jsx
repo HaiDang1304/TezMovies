@@ -1,13 +1,24 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-const Comment = ({ onSubmit }) => {
+const Comment = ({ onNewComment, movieId, user }) => {
   const [comment, setComment] = useState("");
 
-  const handleSubmit = (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     if (!comment.trim()) return;
-    onSubmit(comment);
-    setComment("");
+
+    try {
+      const res = await axios.post("http://localhost:3000/api/comments", {
+        movieId,
+        user: user?.name || "Khách",
+        text: comment,
+      });
+      onNewComment(res.data); // cập nhật list
+      setComment("");
+    } catch (err) {
+      console.error("Error posting comment", err);
+    }
   };
 
   return (
@@ -25,7 +36,10 @@ const Comment = ({ onSubmit }) => {
           <p className="text-sm text-gray-400 mt-2">
             {comment.length}/500 ký tự
           </p>
-          <button className=" text-white rounded-lg flex items-center gap-2">
+          <button
+            onClick={handleSubmit}
+            className=" text-white rounded-lg flex items-center gap-2 cursor-pointer"
+          >
             Gửi
             <svg
               stroke="currentColor"

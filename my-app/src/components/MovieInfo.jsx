@@ -1,6 +1,6 @@
 import React from "react";
 
-const MovieInfo = ({ movie }) => {
+const MovieInfo = ({ movie, hidePoster = false }) => {
     const statusMap = {
         completed: "Đã hoàn thành",
         ongoing: "Đang phát sóng",
@@ -10,11 +10,13 @@ const MovieInfo = ({ movie }) => {
 
     return (
         <div className="flex items-center lg:flex-row flex-col gap-4 mb-6 lg:items-start  ">
-            <img
+            { !hidePoster && (
+                 <img
                 src={movie?.poster_url}
                 alt={movie?.name}
                 className="w-full max-w-45 rounded-lg"
             />
+            )}
             <div className="text-sm text-gray-400">
                 <h2 className="lg:text-2xl text-xl font-bold mb-2 ">{movie?.name}</h2>
                 <p><strong>Quốc gia:</strong> {movie?.country?.name}</p>

@@ -160,7 +160,14 @@ const WatchMovie = () => {
         <div className="flex-1 lg:flex-[3] order-2 lg:order-1">
           {/* Movie Info Component */}
           <div className="mb-4 lg:mb-6">
-            <MovieInfo movie={movie} />
+            <div className="flex gap-4 lg:items-start ">
+               <img
+                src={movie?.poster_url}
+                alt={movie?.name}
+                className="w-full max-w-45 max-h-65 rounded-lg mt-2"
+            />
+            <MovieInfo movie={movie} hidePoster ={true} />
+            </div>
           </div>
 
           {/* Server Selection */}
@@ -204,7 +211,7 @@ const WatchMovie = () => {
           {/* Episode Group Selection */}
           <div className="mb-4 lg:mb-6">
             <h3 className="text-base sm:text-lg mb-2 font-semibold">Danh sách tập</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-4">
+            <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-4">
               {groupedEpisodes.map((_, groupIndex) => (
                 <button
                   key={groupIndex}
@@ -247,8 +254,8 @@ const WatchMovie = () => {
         </div>
 
         {/* Right Column - Movie Content & Actors */}
-        <div className="flex-1 lg:flex-[2] order-1 lg:order-2">
-          {/* Movie Content */}
+        <div className="flex-1 lg:flex-[2] order-2 lg:order-2">
+         
           <div className="mb-4 lg:mb-6">
             <h3 className="text-base sm:text-lg mb-2 font-semibold">Nội dung</h3>
             <div className="text-sm text-gray-300">
@@ -258,15 +265,15 @@ const WatchMovie = () => {
 
           {/* Actors Section */}
           <div>
-            <h3 className="text-base sm:text-lg mb-2 font-semibold">Diễn viên</h3>
+            <h3 className="text-base sm:text-lg mb-4 font-semibold">Diễn viên</h3>
             {tmdbActors.length === 0 ? (
               <p className="text-red-500 text-sm">Không tìm thấy diễn viên.</p>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                 {tmdbActors.map((actor, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center text-center bg-gray-800/50 rounded-lg p-2 sm:p-3 hover:bg-gray-700/50 transition-colors"
+                    className="flex flex-col items-center text-center p-2 sm:p-3 hover:bg-gray-700/50 transition-colors"
                   >
                     <img
                       src={actor.avatar_url}

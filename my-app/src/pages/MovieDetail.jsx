@@ -11,10 +11,9 @@ import GetActorTMDB from "../components/GetActorTMDB";
 import CommentList from "../components/CommentList";
 import Comment from "../components/Comment";
 
-const MovieDetail = () => {
+const MovieDetail = ({ movieId, user }) => {
   const { slug } = useParams();
   const navigate = useNavigate();
-
   const [movie, setMovie] = useState(null);
   const [episodeList, setEpisodeList] = useState([]);
   const [currentServerIndex, setCurrentServerIndex] = useState(0);
@@ -23,6 +22,10 @@ const MovieDetail = () => {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [tmdbActors, setTmdbActors] = useState([]);
+  const [comments, setComments] = useState([]);
+  const handleNewComment = (newComment) => {
+    setComments([newComment, ...comments]);
+  };
 
   const toggleContent = () => setExpanded(!expanded);
 
@@ -156,7 +159,6 @@ const MovieDetail = () => {
       label: "Diễn viên",
       content: (
         <div>
-         
           <GetActorTMDB
             type={movie?.tmdb?.type || "movie"}
             tmdbId={movie?.tmdb?.id}
@@ -331,8 +333,12 @@ const MovieDetail = () => {
               </div>
               <h1 className="text-lg font-bold">{movie.title}</h1>
               <TabMenuMovieDetail tabs={tabs} />
-              <Comment/>
-              <CommentList/>
+              <Comment
+                movieId={movie._id || slug}
+                user={user}
+                onNewComment={handleNewComment}
+              />
+              <CommentList movieId={movie._id || slug} comments={comments} />
             </div>
           </div>
         </div>

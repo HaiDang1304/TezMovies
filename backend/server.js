@@ -372,6 +372,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import connectDB from "./database.js";
 import User from "./models/User.js";
+import commentRouter from "./routers/commentRouters.js";
 
 // --- Load đúng file env ---
 const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
@@ -396,6 +397,9 @@ const getCallbackURL = () =>
 // --- Middleware ---
 app.use(express.json());
 app.set("trust proxy", 1); // bắt buộc cho cookie sameSite: none khi deploy
+
+//comment routers
+app.use("/api/comments", commentRouter);
 
 // --- CORS ---
 app.use(

@@ -26,11 +26,11 @@ const TopicPagex = () => {
 
     return (
         <div className="p-8 mt-10">
-            <h2 className="text-2xl font-bold mb-4">Khám Phá Thế Giới Phim</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Khám Phá Thế Giới Phim</h2>
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4 ">
                 {categoryList.map((cat, i) => (
                     <Link
-                        key={cat.id}
+                        key={cat.slug || i}
                         to={`/the-loai/${cat.slug}`}
                         className="rounded-lg text-white p-8 cursor-pointer hover:opacity-80 transition-transform duration-300 transform hover:scale-105 "
                         style={{ background: gradients[i % gradients.length] }}
