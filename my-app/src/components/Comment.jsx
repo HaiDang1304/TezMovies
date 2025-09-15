@@ -4,17 +4,21 @@ import axios from "axios";
 const Comment = ({ onNewComment, movieId, user }) => {
   const [comment, setComment] = useState("");
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!comment.trim()) return;
 
     try {
-      const res = await axios.post("http://localhost:3000/api/comments", {
-        movieId,
-        user: user?.name || "Khách",
-        text: comment,
-      });
-      onNewComment(res.data); // cập nhật list
+      const res = await axios.post(
+        "http://localhost:3000/api/comments",
+        {
+          slug: movieId,
+          text: comment,
+          userId: user?.id || user?._id,
+        },
+        { withCredentials: true }
+      );
+      onNewComment(res.data.comment);
       setComment("");
     } catch (err) {
       console.error("Error posting comment", err);

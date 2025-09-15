@@ -1,31 +1,31 @@
 import express from "express";
+import Comment from "../models/Comment.js";
+
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { movieId, userId, content } = req.body;
+    const { slug, text } = req.body;
 
-    if (!movieId || !userId || !content) {
-      return res.status(400).json({ message: "Thiếu dữ liệu!" });
+    if (!slug || !text) {
+      return res.status(400).json({ status: false, msg: "Missing fields" });
     }
 
-    const newComment = new Comment({ movieId, userId, content });
+    const user = req.user ? req.user.name : "Khách";
+
+    const newComment = new Comment({
+      slug,
+      text,
+      user: userId, 
+    });
     await newComment.save();
-
-    res.status(201).json(newComment);
+    console.log("USERRR:", user);
+    res.json({ status: true, msg: "Comment saved", comment: newComment });
   } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-//  lấy comment theo movieId
-router.get("/:movieId", async (req, res) => {
-  try {
-    const comments = await Comment.find({ movieId: req.params.movieId })
-      .sort({ createdAt: -1 });
-    res.json(comments);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Lỗi cmt:", err);
+    res
+      .status(500)
+      .json({ status: false, msg: "Server error", error: err.message });
   }
 });
 
