@@ -13,7 +13,7 @@ import NotFound from "./components/NotFound";
 import TopicPages from "./pages/TopicPages";
 import SlideListMovie from "./components/SlideListMovie";
 import SlideVNMovie from "./components/SlideVNMovie";
-import SlideHQMovie from "./components/SlideHQMovie";
+import { AuthProvider } from "./components/AuthContext";
 
 
 
@@ -52,7 +52,7 @@ const sectionComponents = [
 ];
 
 const App = () => (
-  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+  <AuthProvider>
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -95,7 +95,7 @@ const App = () => (
         </Route>
       </Routes>
     </Router>
-  </GoogleOAuthProvider>
+  </AuthProvider>
 );
 
 export default App;

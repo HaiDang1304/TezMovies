@@ -32,7 +32,7 @@ const SlideVNMovie = ({ limit = 12, page = 1 }) => {
     getData();
   }, [page, limit]);
 
-  console.log(movies);
+  // console.log(movies);
   if (loading) return <Loading />;
 
   return (

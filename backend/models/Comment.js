@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
 
-const commentSchema = new mongoose.Schema({
-  slug: { type: String, required: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null }, 
-  guestName: { type: String, default: "Khách" },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const CommentSchema = new mongoose.Schema(
+  {
+    slug: { type: String, required: true },
+    text: { type: String, required: true },
+    user: {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
+      name: { type: String, required: true },
+      email: { type: String },
+      picture: { type: String },
+    },
+  },
+  { timestamps: true }
+);
 
-commentSchema.pre(/^find/, function(next) {
-    this.populate("user","name picture email");
-    next();
-});
-
-export default mongoose.model("Comment", commentSchema);
+export default mongoose.model("Comment", CommentSchema);

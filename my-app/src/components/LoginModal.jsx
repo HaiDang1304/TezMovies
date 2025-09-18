@@ -4,11 +4,7 @@ import GoogleLoginButton from "./GoogleLoginButton";
 export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
   if (!isOpen) return null;
 
-  const handleGoogleLogin = () => {
-    // Logic này có thể bỏ nếu chỉ dùng redirect
-    console.log("User logged in via redirect");
-    onClose();
-  };
+
 
   const handleSwitchToRegister = () => {
     onClose();
@@ -81,7 +77,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
             Quên mật khẩu?
           </a>
 
-          <GoogleLoginButton onLoginSuccess={handleGoogleLogin} />
+          <GoogleLoginButton/>
         </div>
       </div>
     </>

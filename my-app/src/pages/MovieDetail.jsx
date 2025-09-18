@@ -48,6 +48,19 @@ const MovieDetail = ({ movieId, user }) => {
     };
     getData();
   }, [slug]);
+  useEffect(() => {
+    if (!slug) return;
+    axios
+      .get(`http://localhost:3000/api/comments?slug=${slug}`, { withCredentials: true })
+      .then((res) => {
+        if (res.data.status) {
+          setComments(res.data.comments);
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi khi fetch comments:", err);
+      });
+  }, [movie?._id, slug]);
 
   const groupSize = episodeList[0]?.server_data?.length > 100 ? 100 : 10;
 
@@ -334,11 +347,11 @@ const MovieDetail = ({ movieId, user }) => {
               <h1 className="text-lg font-bold">{movie.title}</h1>
               <TabMenuMovieDetail tabs={tabs} />
               <Comment
-                movieId={movie._id || slug}
+                movieId={slug}
                 user={user}
                 onNewComment={handleNewComment}
               />
-              <CommentList movieId={movie._id || slug} comments={comments} />
+              <CommentList movieId={slug} comments={comments} />
             </div>
           </div>
         </div>

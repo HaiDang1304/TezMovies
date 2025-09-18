@@ -37,15 +37,23 @@ const CommentList = ({ comments }) => {
       {comments.map((cmt, index) => (
         <div
           key={cmt._id || index}
-          className="bg-gray-800 p-3 rounded-xl text-white text-sm border border-gray-700"
-        >
-          <p className="font-semibold text-blue-400">
-            {cmt.user?.name || cmt.guestName || "Khách"}
-          </p>
-          <p className="mt-1">{cmt.text}</p>
-          <small className="text-gray-400 text-xs">
-            {new Date(cmt.createdAt).toLocaleString()}
-          </small>
+          className="bg-gray-800 p-3 rounded-xl text-white text-sm border border-gray-700 flex items-start gap-3"
+        > 
+          <img
+            src={cmt.user?.picture || "/default-avatar.png"} 
+            alt={cmt.user?.name || "Khách"}
+            className="w-10 h-10 rounded-full object-cover border border-gray-600"
+          />
+
+          <div>
+            <p className="font-semibold text-blue-400">
+              {cmt.user?.name || cmt.guestName || "Khách"}
+            </p>
+            <p className="mt-1">{cmt.text}</p>
+            <small className="text-gray-400 text-xs">
+              {new Date(cmt.createdAt).toLocaleString()}
+            </small>
+          </div>
         </div>
       ))}
     </div>

@@ -316,7 +316,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 function isAuthenticated(req, res, next) {
-  if (req.session && req.session.user) {
+  if (req.user) {
     return next();
   }
   return res.status(401).json({ msg: "Bạn cần đăng nhập để bình luận" });
