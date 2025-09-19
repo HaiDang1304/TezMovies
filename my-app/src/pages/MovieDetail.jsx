@@ -10,9 +10,13 @@ import { getIdLinkm3u8 } from "../utils/getIdLinkm3u8";
 import GetActorTMDB from "../components/GetActorTMDB";
 import CommentList from "../components/CommentList";
 import Comment from "../components/Comment";
+import { useAuth } from "../components/AuthContext";
 
-const MovieDetail = ({ movieId, user }) => {
+
+
+const MovieDetail = ({ movieId }) => {
   const { slug } = useParams();
+  const {user} = useAuth();
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [episodeList, setEpisodeList] = useState([]);
@@ -51,8 +55,9 @@ const MovieDetail = ({ movieId, user }) => {
   useEffect(() => {
     if (!slug) return;
     axios
-      .get(`http://localhost:3000/api/comments?slug=${slug}`, { withCredentials: true })
+      .get(`http://localhost:3000/api/comments?slug=${slug}`)
       .then((res) => {
+        console.log("Kết quả API:", res.data);
         if (res.data.status) {
           setComments(res.data.comments);
         }
@@ -85,6 +90,15 @@ const MovieDetail = ({ movieId, user }) => {
     setCurrentServerIndex(index);
     setCurrentGroupIndex(0);
   };
+
+  const handleReply = (commentId, reply) => {
+  setComments((prev) =>
+    prev.map((c) =>
+      c._id === commentId ? { ...c, replies: [...c.replies, reply] } : c
+    )
+  );
+};
+
 
   const tabs = [
     {
@@ -351,7 +365,7 @@ const MovieDetail = ({ movieId, user }) => {
                 user={user}
                 onNewComment={handleNewComment}
               />
-              <CommentList movieId={slug} comments={comments} />
+              <CommentList movieId={slug} comments={comments} onReply={handleReply} user={user} />
             </div>
           </div>
         </div>

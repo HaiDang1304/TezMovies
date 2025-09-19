@@ -380,7 +380,7 @@ app.get("/", (req, res) => {
 });
 
 // --- Comment router ---
-app.use("/api/comments", isAuthenticated, commentRouter); 
+app.use("/api/comments", commentRouter); 
 
 // --- Connect DB + Start Server ---
 connectDB();

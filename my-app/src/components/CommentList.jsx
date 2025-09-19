@@ -1,58 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-const CommentList = ({ comments }) => {
-  if (!comments || comments.length === 0) {
-    return (
-      <div
-        className="flex flex-col items-center justify-center 
-                py-6 sm:py-8 md:py-12 
-                px-4 sm:px-6 md:px-8 
-                text-gray-400 bg-gray-900 rounded-2xl mt-6 sm:mt-10"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 640 640"
-          className="w-4 h-4 sm:w-12 sm:h-12 md:w-16 md:h-16 mb-3 opacity-70"
-          fill="gray"
-        >
-          <path
-            className="w-2 h-2"
-            d="M320 544C461.4 544 576 436.5 576 304C576 171.5 461.4 64 320 64C178.6 64 64 171.5 64 304C64 358.3 83.2 408.3 115.6 448.5L66.8 540.8C62 549.8 63.5 560.8 70.4 568.3C77.3 575.8 88.2 578.1 97.5 574.1L215.9 523.4C247.7 536.6 282.9 544 320 544zM192 272C209.7 272 224 286.3 224 304C224 321.7 209.7 336 192 336C174.3 336 160 321.7 160 304C160 286.3 174.3 272 192 272zM320 272C337.7 272 352 286.3 352 304C352 321.7 337.7 336 320 336C302.3 336 288 321.7 288 304C288 286.3 302.3 272 320 272zM416 304C416 286.3 430.3 272 448 272C465.7 272 480 286.3 480 304C480 321.7 465.7 336 448 336C430.3 336 416 321.7 416 304z"
-          />
-        </svg>
+const CommentList = ({ comments, onReply, user }) => {
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState("");
 
-        <p className="text-base sm:text-lg md:text-xl font-semibold text-center">
-          Chưa có bình luận nào
-        </p>
-
-        <p className="mt-2 text-lg sm:text-base md:text-sx italic text-center max-w-md">
-          Hãy là người đầu tiên bình luận
-        </p>
-      </div>
-    );
-  }
+  const handleReply = async (commentId) => {
+    if (!replyText.trim()) return;
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/api/comments/${commentId}/reply`,
+        { text: replyText },
+        { withCredentials: true }
+      );
+      onReply(commentId, res.data.reply);
+      setReplyText("");
+      setReplyingTo(null);
+    } catch (err) {
+      console.error("Error posting reply:", err);
+    }
+  };
 
   return (
     <div className="mt-4 space-y-3">
-      {comments.map((cmt, index) => (
+      {comments.map((cmt) => (
         <div
-          key={cmt._id || index}
-          className="bg-gray-800 p-3 rounded-xl text-white text-sm border border-gray-700 flex items-start gap-3"
-        > 
-          <img
-            src={cmt.user?.picture || "/default-avatar.png"} 
-            alt={cmt.user?.name || "Khách"}
-            className="w-10 h-10 rounded-full object-cover border border-gray-600"
-          />
+          key={cmt._id}
+          className="bg-gray-800 p-3 rounded-xl text-white text-sm border border-gray-700"
+        >
+          <p className="font-semibold text-blue-400 flex items-center gap-2">
+            <img src={cmt.user?.picture} alt="" className="w-6 h-6 rounded-full" />
+            {cmt.user?.name || "Khách"}
+          </p>
+          <p className="mt-1">{cmt.text}</p>
+          <small className="text-gray-400 text-xs">
+            {new Date(cmt.createdAt).toLocaleString()}
+          </small>
 
-          <div>
-            <p className="font-semibold text-blue-400">
-              {cmt.user?.name || cmt.guestName || "Khách"}
-            </p>
-            <p className="mt-1">{cmt.text}</p>
-            <small className="text-gray-400 text-xs">
-              {new Date(cmt.createdAt).toLocaleString()}
-            </small>
+          {/* Nút trả lời */}
+          {user && (
+            <button
+              className="text-xs text-yellow-400 mt-2"
+              onClick={() => setReplyingTo(cmt._id)}
+            >
+              Trả lời
+            </button>
+          )}
+
+          {/* Form trả lời */}
+          {replyingTo === cmt._id && (
+            <div className="mt-2">
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                className="w-full p-2 rounded bg-gray-700 text-white text-sm"
+                placeholder="Viết phản hồi..."
+              />
+              <button
+                onClick={() => handleReply(cmt._id)}
+                className="text-xs text-white bg-blue-600 px-2 py-1 rounded mt-1"
+              >
+                Gửi
+              </button>
+            </div>
+          )}
+
+          {/* Danh sách reply */}
+          <div className="ml-6 mt-2 space-y-2">
+            {cmt.replies?.map((rep, i) => (
+              <div key={i} className="bg-gray-700 p-2 rounded text-sm">
+                <p className="font-semibold text-green-400 flex items-center gap-2">
+                  <img src={rep.user?.picture} alt="" className="w-5 h-5 rounded-full" />
+                  {rep.user?.name}
+                </p>
+                <p>{rep.text}</p>
+              </div>
+            ))}
           </div>
         </div>
       ))}

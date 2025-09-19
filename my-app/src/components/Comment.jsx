@@ -14,7 +14,7 @@ const Comment = ({ onNewComment, movieId, user }) => {
         {
           slug: movieId,
           text: comment,
-          userId: user?.id || user?._id,
+          // userId: user?.id || user?._id,
         },
         { withCredentials: true }
       );
@@ -32,7 +32,8 @@ const Comment = ({ onNewComment, movieId, user }) => {
         <textarea
           className="chakra-textarea bg-[#191b24] text-white rounded-lg p-4 border-2 border-transparent outline-none focus:border-gray-500 css-sedhif w-full h-[120px]"
           maxLength={500}
-          placeholder="Viết bình luận của bạn..."
+          placeholder={user ? "Viết bình luận..." : "Bạn phải đăng nhập mới có thể bình luận !!"}
+          disabled={!user}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
