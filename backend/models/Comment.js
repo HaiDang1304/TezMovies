@@ -1,21 +1,21 @@
 import mongoose from "mongoose";
 
-const ReplyScheme = new mongoose.Schema(
-  {
-    user: {
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: false,
-      },
-      name: { type: String, required: true },
-      email: { type: String },
-      picture: { type: String },
-    },
-    text: { type: String, required: true },
-  },
-  { timestamps: true }
-);
+// const ReplyScheme = new mongoose.Schema(
+//   {
+//     user: {
+//       id: {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "User",
+//         required: false,
+//       },
+//       name: { type: String, required: true },
+//       email: { type: String },
+//       picture: { type: String },
+//     },
+//     text: { type: String, required: true },
+//   },
+//   { timestamps: true }
+// );
 
 const CommentSchema = new mongoose.Schema(
   {
@@ -31,7 +31,6 @@ const CommentSchema = new mongoose.Schema(
       email: { type: String },
       picture: { type: String },
     },
-    replies: [ReplyScheme],
   },
   { timestamps: true }
 );

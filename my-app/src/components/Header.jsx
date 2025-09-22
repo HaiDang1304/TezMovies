@@ -124,7 +124,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
         ) : (
           <div className="hidden md:flex items-center space-x-3">
             <img
-              src={user?.picture || "/default-avatar.avif"} // Sử dụng user.picture thay vì user.avatar
+              src={user?.picture || "/default-avatar.avif"} 
               referrerPolicy="no-referrer"
               alt={user?.name || "User avatar"}
               className="w-10 h-10 rounded-full border"

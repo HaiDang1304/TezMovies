@@ -1,19 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ReplyItem from "./ReplyItem";
 
-const CommentList = ({ comments, onReply, user }) => {
+const CommentList = ({ comments, user }) => {
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState("");
+  const [replies, setReplies] = useState({}); // { [commentId]: ReplyTree[] }
+
+  useEffect(() => {
+    if (!comments?.length) return;
+    let alive = true;
+
+    (async () => {
+      try {
+        const results = await Promise.all(
+          comments.map((cmt) =>
+            axios
+              .get(`http://localhost:3000/api/replies/${cmt._id}`, {
+                withCredentials: true,
+              })
+              .then((r) => ({
+                commentId: cmt._id,
+                items: Array.isArray(r.data?.replies)
+                  ? r.data.replies.filter(Boolean)
+                  : [],
+              }))
+              .catch(() => ({ commentId: cmt._id, items: [] }))
+          )
+        );
+
+        if (!alive) return;
+
+        const next = results.reduce((acc, { commentId, items }) => {
+          acc[commentId] = items;
+          return acc;
+        }, {});
+        setReplies(next);
+      } catch (e) {
+        // optional: console.error(e);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [comments]);
 
   const handleReply = async (commentId) => {
     if (!replyText.trim()) return;
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/comments/${commentId}/reply`,
-        { text: replyText },
+        "http://localhost:3000/api/replies",
+        { commentId, text: replyText },
         { withCredentials: true }
       );
-      onReply(commentId, res.data.reply);
+      const newReply = res.data?.reply;
+      setReplies((prev) => ({
+        ...prev,
+        [commentId]: [ ...(prev[commentId] ?? []), newReply ].filter(Boolean),
+      }));
       setReplyText("");
       setReplyingTo(null);
     } catch (err) {
@@ -21,23 +66,50 @@ const CommentList = ({ comments, onReply, user }) => {
     }
   };
 
+  // Thêm reply con (nested)
+  const handleReplyAdded = (parentReplyId, newReply) => {
+    const cid = newReply?.commentId; // server trả kèm commentId
+    if (!cid) return;
+
+    const updateTree = (items = []) =>
+      items
+        .filter(Boolean)
+        .map((node) => {
+          if (!node?._id) return node;
+          if (node._id === parentReplyId) {
+            const child = Array.isArray(node.replies) ? node.replies : [];
+            return { ...node, replies: [...child, newReply].filter(Boolean) };
+          }
+          return { ...node, replies: updateTree(node?.replies || []) };
+        });
+
+    setReplies((prev) => ({
+      ...prev,
+      [cid]: updateTree(prev[cid] || []),
+    }));
+  };
+
   return (
     <div className="mt-4 space-y-3">
-      {comments.map((cmt) => (
+      {(comments ?? []).map((cmt) => (
         <div
           key={cmt._id}
           className="bg-gray-800 p-3 rounded-xl text-white text-sm border border-gray-700"
         >
           <p className="font-semibold text-blue-400 flex items-center gap-2">
-            <img src={cmt.user?.picture} alt="" className="w-6 h-6 rounded-full" />
+            <img
+              src={cmt.user?.picture || "/default-avatar.png"}
+              alt={cmt.user?.name || "Khách"}
+              className="w-6 h-6 rounded-full"
+            />
             {cmt.user?.name || "Khách"}
           </p>
+
           <p className="mt-1">{cmt.text}</p>
           <small className="text-gray-400 text-xs">
             {new Date(cmt.createdAt).toLocaleString()}
           </small>
 
-          {/* Nút trả lời */}
           {user && (
             <button
               className="text-xs text-yellow-400 mt-2"
@@ -47,7 +119,6 @@ const CommentList = ({ comments, onReply, user }) => {
             </button>
           )}
 
-          {/* Form trả lời */}
           {replyingTo === cmt._id && (
             <div className="mt-2">
               <textarea
@@ -65,17 +136,17 @@ const CommentList = ({ comments, onReply, user }) => {
             </div>
           )}
 
-          {/* Danh sách reply */}
           <div className="ml-6 mt-2 space-y-2">
-            {cmt.replies?.map((rep, i) => (
-              <div key={i} className="bg-gray-700 p-2 rounded text-sm">
-                <p className="font-semibold text-green-400 flex items-center gap-2">
-                  <img src={rep.user?.picture} alt="" className="w-5 h-5 rounded-full" />
-                  {rep.user?.name}
-                </p>
-                <p>{rep.text}</p>
-              </div>
-            ))}
+            {(replies[cmt._id] ?? [])
+              .filter(Boolean)
+              .map((rep) => (
+                <ReplyItem
+                  key={rep?._id || Math.random()}
+                  reply={rep}
+                  user={user}
+                  onReplyAdded={handleReplyAdded}
+                />
+              ))}
           </div>
         </div>
       ))}

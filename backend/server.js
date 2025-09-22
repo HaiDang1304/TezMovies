@@ -205,6 +205,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import connectDB from "./database.js";
 import User from "./models/User.js";
 import commentRouter from "./routers/commentRouters.js";
+import replyRouter from "./routers/replyRouter.js";
 
 // --- Load đúng file env ---
 const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
@@ -381,6 +382,8 @@ app.get("/", (req, res) => {
 
 // --- Comment router ---
 app.use("/api/comments", commentRouter); 
+
+app.use("/api/replies", replyRouter);
 
 // --- Connect DB + Start Server ---
 connectDB();
