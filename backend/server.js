@@ -40,7 +40,6 @@
 //   return res.status(401).json({ msg: "Bạn cần đăng nhập để bình luận" });
 // }
 
-
 // // --- CORS --- (đặt trước tất cả routes)
 // app.use(
 //   cors({
@@ -54,10 +53,8 @@
 // // Handle preflight
 // app.options("*", cors());
 
-
 // // comment routers
 // app.use("/api/comments", commentRouter);
-
 
 // // --- Session ---
 // if (!process.env.SESSION_SECRET) {
@@ -70,7 +67,7 @@
 //     resave: false,
 //     saveUninitialized: false,
 //     proxy: isProduction,
-//     rolling: false, 
+//     rolling: false,
 //     store: MongoStore.create({
 //       mongoUrl: process.env.MONGO_URI,
 //       ttl: 24 * 60 * 60, // 1 ngày
@@ -206,9 +203,13 @@ import connectDB from "./database.js";
 import User from "./models/User.js";
 import commentRouter from "./routers/commentRouters.js";
 import replyRouter from "./routers/replyRouter.js";
+import authRouter from "./routers/authRouter.js";
+// Import transporter từ config
+import transporter from "./config/emailConfig.js";
 
 // --- Load đúng file env ---
-const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
+const envFile =
+  process.env.NODE_ENV === "production" ? ".env.production" : ".env";
 dotenv.config({ path: envFile });
 console.log(`🔧 Loading environment from: ${envFile}`);
 
@@ -227,21 +228,21 @@ const getCallbackURL = () =>
     ? process.env.GOOGLE_APP_CALLBACK_PROD
     : process.env.GOOGLE_APP_CALLBACK_DEV;
 
+// Xóa cấu hình nodemailer cũ ở đây - đã chuyển sang emailConfig.js
+
 // --- Middleware ---
 app.use(express.json());
-app.set("trust proxy", 1); // bắt buộc cho cookie sameSite: none khi deploy
-
+app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.FRONTEND_URL], 
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// Handle preflight
 app.options("*", cors());
 
 // --- Session ---
@@ -255,17 +256,17 @@ app.use(
     resave: false,
     saveUninitialized: false,
     proxy: isProduction,
-    rolling: false, 
+    rolling: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 24 * 60 * 60, 
+      ttl: 24 * 60 * 60,
     }),
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
-      path: '/',
+      path: "/",
     },
   })
 );
@@ -308,7 +309,6 @@ passport.serializeUser((user, done) => done(null, user._id));
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
-    console.log("Deserialized user:", user);
     done(null, user);
   } catch (err) {
     console.error("Deserialize error:", err);
@@ -337,7 +337,9 @@ app.get(
   passport.authenticate("google", { failureRedirect: FRONTEND_URL }),
   (req, res) => {
     console.log(
-      `✅ Authentication successful in ${isProduction ? "production" : "development"}`
+      `✅ Authentication successful in ${
+        isProduction ? "production" : "development"
+      }`
     );
     res.redirect(`${FRONTEND_URL}?auth=success`);
   }
@@ -358,7 +360,8 @@ app.post("/auth/logout", (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ message: "Logout failed" });
     req.session.destroy((err) => {
-      if (err) return res.status(500).json({ message: "Session destroy failed" });
+      if (err)
+        return res.status(500).json({ message: "Session destroy failed" });
       res.clearCookie("connect.sid", {
         httpOnly: true,
         secure: isProduction,
@@ -380,15 +383,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// --- Comment router ---
-app.use("/api/comments", commentRouter); 
-
+// --- Routers ---
+app.use("/api/comments", commentRouter);
 app.use("/api/replies", replyRouter);
+app.use("/api/auth", authRouter);
 
 // --- Connect DB + Start Server ---
 connectDB();
 app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT} (${isProduction ? "production" : "development"})`)
+  console.log(
+    `🚀 Server running on port ${PORT} (${
+      isProduction ? "production" : "development"
+    })`
+  )
 );
 
-export { isAuthenticated };
+export { isAuthenticated, transporter };

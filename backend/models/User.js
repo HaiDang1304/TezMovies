@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-  googleId: String,
-  email: String,
-  name: String,
-  picture: String,
-  createdAt: { type: Date, default: Date.now }
-});
+const userSchema = new mongoose.Schema({
+  googleId: { type: String },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String }, 
+  picture: { type: String },
+  isVerified: { type: Boolean, default: false }, 
+  verificationToken: { type: String },           
+}, { timestamps: true });
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model("User", userSchema);

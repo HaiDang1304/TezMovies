@@ -195,13 +195,14 @@ export default function GoogleLoginButton() {
   return (
     <button
       onClick={handleClick}
-      className="flex items-center justify-center gap-2 bg-white text-gray-800 rounded-lg py-3 px-4 font-semibold hover:bg-gray-200 transition-all duration-200 w-full shadow-md hover:shadow-lg"
+      className="flex items-center justify-center gap-2 bg-white text-gray-800 rounded-lg py-1 px-3 font-semibold hover:bg-gray-200 transition-all duration-200 w-full shadow-md hover:shadow-lg"
     >
       <img
-        src="/google-icon.svg"
+        src="/icons8-google-96.png"
         alt="Google"
-        className="w-5 h-5"
+        className="w-10 h-10"
       />
+      
       Đăng nhập với Google
     </button>
   );
