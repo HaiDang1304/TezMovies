@@ -6,9 +6,9 @@ import {
   faBars,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import ModalSearch from "./ModalSeacrch";
-import DropdownList from "./DropdownList";
-import DropdownCategory from "./DropdownCategory";
+import ModalSearch from "../Others/ModalSeacrch";
+import DropdownList from "../Categories/DropdownList";
+import DropdownCategory from "../Categories/DropdownCategory";
 
 const Header = ({ onLoginClick, onRegisterClick }) => {
   const [searchTerm, setSearchTerm] = useState("");

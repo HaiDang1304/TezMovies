@@ -2,7 +2,7 @@ import { use, useEffect, useState } from "react";
 import axios from "axios";
 import Image from './Image'
 import { Link } from "react-router-dom";
-import Loading from "./Loading";
+import Loading from "../Layout/Loading";
 
 
 

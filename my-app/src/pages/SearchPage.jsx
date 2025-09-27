@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { searchMovies } from "../api";
 import { Navigate } from "react-router-dom";
-import Loading from "../components/Loading";
-import Image from "../components/Image";
+import Loading from "../components/Layout/Loading";
+import Image from "../components/Others/Image";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();

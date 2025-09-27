@@ -5,7 +5,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Link } from "react-router-dom";
-import Image from "./Image";
+import Image from "../Others/Image";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);

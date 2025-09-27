@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Image from "../components/Image";
-import Loading from "../components/Loading";
+import Image from "../components/Others/Image";
+import Loading from "../components/Layout/Loading";
 
 const CategoryDetail = () => {
   const { describe, slug, type_list } = useParams();

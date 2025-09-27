@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-import LoginModal from "./LoginModal";
-import RegisterModal from "./RegisterModal";
+import LoginModal from "../Auth/LoginModal";
+import RegisterModal from "../Auth/RegisterModal";
 
 const Layout = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);

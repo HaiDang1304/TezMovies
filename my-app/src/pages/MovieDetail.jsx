@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import MovieInfo from "../components/MovieInfo";
-import Loading from "../components/Loading";
-import TabMenuMovieDetail from "../components/TabMenuMovieDetail";
+import MovieInfo from "../components/Movies/MovieInfo";
+import Loading from "../components/Layout/Loading";
+import TabMenuMovieDetail from "../components/Movies/TabMenuMovieDetail";
 import { fetchTmdbActors } from "../utils/fetchTmdbActors";
-import MoviesRecommended from "../components/MovieRecommended";
+import MoviesRecommended from "../components/Movies/MovieRecommended";
 import { getIdLinkm3u8 } from "../utils/getIdLinkm3u8";
-import GetActorTMDB from "../components/GetActorTMDB";
-import CommentList from "../components/CommentList";
-import Comment from "../components/Comment";
-import { useAuth } from "../components/AuthContext";
+import GetActorTMDB from "../components/Actors/GetActorTMDB";
+import CommentList from "../components/Comments/CommentList";
+import Comment from "../components/Comments/Comment";
+import { useAuth } from "../components/Auth/AuthContext";
 
 
 

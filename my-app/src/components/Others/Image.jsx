@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import Loading from "./Loading"
+import Loading from "../Layout/Loading"
 
 const Image = ({ orientation = "vertical",pbValueDefault ,rounded = "2xl", className = " ", ...props }) => {
 

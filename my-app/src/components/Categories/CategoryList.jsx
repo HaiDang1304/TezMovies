@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CategoryCard from "./CategoryCard.jsx";
+import CategoryCard from "../Categories/CategoryCard";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";

@@ -1,19 +1,28 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import Layout from "./components/Layout";
-import MovieList from "./components/MovieList";
-import CategoryList from "./components/CategoryList";
-import SectionMovie from "./components/SectionMovie";
+// Layout
+import Layout from "./components/Layout/Layout";
+import NotFound from "./components/Layout/NotFound";
+
+// Auth
+import { AuthProvider } from "./components/Auth/AuthContext";
+
+// Movies
+import MovieList from "./components/Movies/MovieList";
+import SectionMovie from "./components/Movies/SectionMovie";
+import SlideListMovie from "./components/Movies/SlideListMovie";
+import SlideVNMovie from "./components/Movies/SlideVNMovie";
+
+// Categories
+import CategoryList from "./components/Categories/CategoryList";
+
+// Pages
 import WatchMovie from "./pages/WatchMovie";
 import MovieDetail from "./pages/MovieDetail";
 import CategoryDetail from "./pages/CategoryDetail";
 import SearchPage from "./pages/SearchPage";
-import NotFound from "./components/NotFound";
 import TopicPages from "./pages/TopicPages";
-import SlideListMovie from "./components/SlideListMovie";
-import SlideVNMovie from "./components/SlideVNMovie";
-import { AuthProvider } from "./components/AuthContext";
 import VerifyPage from "./pages/VerifyPage";
 
 const GOOGLE_CLIENT_ID =

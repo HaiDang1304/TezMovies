@@ -1,10 +1,10 @@
 import { use, useEffect, useState } from "react";
-import { getRandomItem } from "../utils/random-movie-suggestion";
-import { categories, countries } from "../constants/movie";
-import { movieRecommended } from "../utils/fetchMovieRecommended";
-import Loading from "./Loading";
+import { getRandomItem } from "../../utils/random-movie-suggestion";
+import { categories, countries } from "../../constants/movie";
+import { movieRecommended } from "../../utils/fetchMovieRecommended";
+import Loading from "../Layout/Loading";
 import { Link } from "react-router-dom";
-import Image from "./Image";
+import Image from "../Others/Image";
 
 
 const MoviesRecommended = () => {

@@ -4,9 +4,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
-import Image from "./Image";
+import Image from "../Others/Image";
 import { Link } from "react-router-dom";
-import { getIdLinkm3u8 } from "../utils/getIdLinkm3u8";
+import { getIdLinkm3u8 } from "../../utils/getIdLinkm3u8";
 
 const SlideListMovie = () => {
   const [movies, setMovies] = useState();

@@ -2,7 +2,7 @@ import { useParams, useLocation, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 const API_KEY = "8afc137d2cb21415981fb4af3b88e9e5";
-import MovieInfo from "../components/MovieInfo";
+import MovieInfo from "../components/Movies/MovieInfo";
 import App from "../App";
 
 const WatchMovie = () => {

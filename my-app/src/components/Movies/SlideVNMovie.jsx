@@ -6,9 +6,9 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import { Autoplay, EffectFade } from "swiper/modules";
 import { Link } from "react-router-dom";
-import Image from "./Image";
-import { API_URL } from "../constants/env";
-import Loading from "./Loading";
+import Image from "../Others/Image";
+import { API_URL } from "../../constants/env";
+import Loading from "../Layout/Loading";
 
 const SlideVNMovie = ({ limit = 12, page = 1 }) => {
   const [movies, setMovies] = useState([]);
