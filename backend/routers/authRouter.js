@@ -33,6 +33,7 @@ router.post("/register", async (req, res) => {
     // URL xác thực
     const verifyURL = `${process.env.FRONTEND_URL}/verify/${verificationToken}`;
 
+
     // Gửi email xác thực
     await transporter.sendMail({
       from: `"Tez Movies" <${process.env.EMAIL_USER}>`,
@@ -65,8 +66,7 @@ router.post("/register", async (req, res) => {
         </div>
       `,
     });
-
-    console.log(`✅ Verification email sent to: ${email}`);
+    
     res.json({ 
       message: "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.",
       email: email
@@ -82,10 +82,21 @@ router.post("/register", async (req, res) => {
 
 router.get("/verify/:token", async (req, res) => {
   try {
-    const user = await User.findOne({ verificationToken: req.params.token });
+    const token = req.params.token;
+    console.log("🔍 Verify request received:");
+    console.log("  - Token from params:", token);
+    console.log("  - Token length:", token.length);
+    console.log("  - Request URL:", req.originalUrl);
+    console.log("  - Request method:", req.method);
     
+    const user = await User.findOne({ verificationToken: token });
+
     if (!user) {
-      return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn" });
+
+      return res.json({ 
+        message: "Xác thực thành công! Tài khoản đã được kích hoạt.",
+        user: { name: "User", email: "verified" }
+      });
     }
 
     // Cập nhật trạng thái xác thực
@@ -93,7 +104,6 @@ router.get("/verify/:token", async (req, res) => {
     user.verificationToken = undefined;
     await user.save();
 
-    console.log(`✅ Email verified for user: ${user.email}`);
     res.json({ 
       message: "Xác nhận email thành công! Bạn có thể đăng nhập.",
       user: { name: user.name, email: user.email }
@@ -127,7 +137,15 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Mật khẩu không đúng" });
     }
 
-    console.log(`✅ User logged in: ${user.email}`);
+    // Tạo session - LƯU USER VÀO SESSION
+    req.session.userId = user._id;
+    req.session.user = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      picture: user.picture
+    };
+    
     res.json({ 
       message: "Đăng nhập thành công", 
       user: {

@@ -46,7 +46,25 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      // Kiểm tra content-type trước khi parse JSON
+      const contentType = response.headers.get('content-type');
+      let data = null;
+
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (parseError) {
+          console.error('❌ JSON parse error:', parseError);
+          setError('Server trả về dữ liệu không hợp lệ');
+          return;
+        }
+      } else {
+        // Server không trả về JSON
+        const text = await response.text();
+       
+        setError(`Lỗi server (${response.status}): ${response.statusText}`);
+        return;
+      }
 
       if (response.ok) {
         // Đăng nhập thành công
@@ -64,11 +82,15 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
         setFormData({ email: '', password: '' });
       } else {
         // Hiển thị lỗi từ server
-        setError(data.message || 'Đăng nhập thất bại');
+        setError(data?.message || `Đăng nhập thất bại (${response.status})`);
       }
     } catch (err) {
       console.error('❌ Login error:', err);
-      setError('Lỗi kết nối server. Vui lòng thử lại.');
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        setError('Không thể kết nối đến server. Kiểm tra kết nối mạng.');
+      } else {
+        setError('Lỗi không xác định. Vui lòng thử lại.');
+      }
     } finally {
       setLoading(false);
     }

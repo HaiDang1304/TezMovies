@@ -14,10 +14,10 @@ import TopicPages from "./pages/TopicPages";
 import SlideListMovie from "./components/SlideListMovie";
 import SlideVNMovie from "./components/SlideVNMovie";
 import { AuthProvider } from "./components/AuthContext";
+import VerifyPage from "./pages/VerifyPage";
 
-
-
-const GOOGLE_CLIENT_ID ="685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID =
+  "685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
 
 const defaultSwiper = {
   0: { slidesPerView: 2 },
@@ -26,7 +26,7 @@ const defaultSwiper = {
   1024: { slidesPerView: 6 },
   1280: { slidesPerView: 7 },
 };
-const SwiperSlide ={
+const SwiperSlide = {
   0: { slidesPerView: 2 },
   640: { slidesPerView: 3 },
   768: { slidesPerView: 4 },
@@ -37,34 +37,102 @@ const SwiperSlide ={
 // Gom tất cả SectionMovie thành mảng
 const sectionComponents = [
   // <SectionMovie describe="quoc-gia" slug="viet-nam" orientation="horizontal" title="Phim Việt Nam" swiperResponsive={SwiperSlide}/>,
-  <SectionMovie describe="quoc-gia" slug="trung-quoc" orientation="horizontal" title="Phim Trung Quốc" swiperResponsive={SwiperSlide} />,
-  <SectionMovie describe="quoc-gia" slug="han-quoc" orientation="horizontal" title="Phim Hàn Quốc" swiperResponsive={SwiperSlide} />,
-  <SectionMovie describe="the-loai" slug="hanh-dong" title="Hành Động Đỉnh Cao" swiperResponsive={defaultSwiper} />,
-  <SectionMovie describe="the-loai" slug="kinh-di" orientation="horizontal" title="Kinh Dị Đến Đáng Sợ" swiperResponsive={SwiperSlide} />,
-  <SectionMovie describe="the-loai" slug="tinh-cam" title="Cảm Xúc Dâng Trào" swiperResponsive={defaultSwiper} />,
-  <SectionMovie describe="the-loai" slug="phieu-luu" orientation="horizontal" title="Phiêu Lưu Kỳ Thú" swiperResponsive={SwiperSlide} />,
-  <SectionMovie describe="the-loai" slug="gia-dinh" title="Khoảnh Khắc Gia Đình" swiperResponsive={defaultSwiper} />,
-  <SectionMovie describe="the-loai" slug="co-trang" orientation="horizontal" title="Cổ Trang Kinh Điển" swiperResponsive={SwiperSlide} />,
-  <SectionMovie describe="the-loai" slug="vien-tuong" title="Khoa Học Viễn Tưởng" swiperResponsive={defaultSwiper} />,
-  <SectionMovie describe="the-loai" slug="hai-huoc" title="Vui Vẻ Hài Hước" swiperResponsive={defaultSwiper} />,
-  <SectionMovie describe="the-loai" slug="bi-an" orientation="horizontal" title="Bí Ẩn Rùng Rợn" swiperResponsive={SwiperSlide} />,
-  <SectionMovie describe="the-loai" slug="chien-tranh" title="Chiến Tranh Khốc Liệt" swiperResponsive={defaultSwiper} />,
+  <SectionMovie
+    describe="quoc-gia"
+    slug="trung-quoc"
+    orientation="horizontal"
+    title="Phim Trung Quốc"
+    swiperResponsive={SwiperSlide}
+  />,
+  <SectionMovie
+    describe="quoc-gia"
+    slug="han-quoc"
+    orientation="horizontal"
+    title="Phim Hàn Quốc"
+    swiperResponsive={SwiperSlide}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="hanh-dong"
+    title="Hành Động Đỉnh Cao"
+    swiperResponsive={defaultSwiper}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="kinh-di"
+    orientation="horizontal"
+    title="Kinh Dị Đến Đáng Sợ"
+    swiperResponsive={SwiperSlide}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="tinh-cam"
+    title="Cảm Xúc Dâng Trào"
+    swiperResponsive={defaultSwiper}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="phieu-luu"
+    orientation="horizontal"
+    title="Phiêu Lưu Kỳ Thú"
+    swiperResponsive={SwiperSlide}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="gia-dinh"
+    title="Khoảnh Khắc Gia Đình"
+    swiperResponsive={defaultSwiper}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="co-trang"
+    orientation="horizontal"
+    title="Cổ Trang Kinh Điển"
+    swiperResponsive={SwiperSlide}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="vien-tuong"
+    title="Khoa Học Viễn Tưởng"
+    swiperResponsive={defaultSwiper}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="hai-huoc"
+    title="Vui Vẻ Hài Hước"
+    swiperResponsive={defaultSwiper}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="bi-an"
+    orientation="horizontal"
+    title="Bí Ẩn Rùng Rợn"
+    swiperResponsive={SwiperSlide}
+  />,
+  <SectionMovie
+    describe="the-loai"
+    slug="chien-tranh"
+    title="Chiến Tranh Khốc Liệt"
+    swiperResponsive={defaultSwiper}
+  />,
 ];
 
 const App = () => (
   <AuthProvider>
     <Router>
       <Routes>
+        <Route path="/verify/:token" element={<VerifyPage />} />
+
         <Route path="/" element={<Layout />}>
           {/* Trang chủ */}
           <Route
             index
             element={
               <>
-               <SlideListMovie/>
+                <SlideListMovie />
                 {/* <MovieList /> */}
                 <CategoryList />
-                <SlideVNMovie/>
+                <SlideVNMovie />
                 {/* <SlideHQMovie/> */}
                 {sectionComponents.map((Section, i) => (
                   <React.Fragment key={i}>{Section}</React.Fragment>
@@ -91,7 +159,6 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
 
           <Route path="/chu-de" element={<TopicPages />} />
-
         </Route>
       </Routes>
     </Router>

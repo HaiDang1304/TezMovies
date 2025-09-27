@@ -348,7 +348,11 @@ app.get(
 // --- User info ---
 app.get("/api/user", (req, res) => {
   console.log("🔍 /api/user called | Session:", req.sessionID);
-  if (req.user) {
+  console.log("🔍 Session data:", req.session);
+  
+  if (req.session && req.session.user) {
+    res.json({ user: req.session.user });
+  } else if (req.user) { // Fallback cho Google OAuth
     res.json({ user: req.user });
   } else {
     res.status(401).json({ message: "Unauthorized", sessionID: req.sessionID });
