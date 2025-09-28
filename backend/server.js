@@ -20,6 +20,7 @@ dotenv.config({ path: envFile });
 console.log(`🔧 Loading environment from: ${envFile}`);
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -35,6 +36,9 @@ const getCallbackURL = () =>
     : process.env.GOOGLE_APP_CALLBACK_DEV;
 
 // Xóa cấu hình nodemailer cũ ở đây - đã chuyển sang emailConfig.js
+
+// Serve static folder /avatars
+app.use("/avatars", express.static("public/avatars"));
 
 // --- Middleware ---
 app.use(express.json());

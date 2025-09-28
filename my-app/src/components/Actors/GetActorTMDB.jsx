@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchTmdbActors } from "../../utils/fetchTmdbActors";
+import { fetchTmdbActors } from "../../../../backend/utils/fetchTmdbActors";
 import NoActorInfo from "./NoActorInfor";
 
 export default function GetActorTMDB({

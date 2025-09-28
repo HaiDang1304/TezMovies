@@ -57,7 +57,7 @@ const CommentList = ({ comments, user }) => {
       const newReply = res.data?.reply;
       setReplies((prev) => ({
         ...prev,
-        [commentId]: [ ...(prev[commentId] ?? []), newReply ].filter(Boolean),
+        [commentId]: [...(prev[commentId] ?? []), newReply].filter(Boolean),
       }));
       setReplyText("");
       setReplyingTo(null);
@@ -72,16 +72,14 @@ const CommentList = ({ comments, user }) => {
     if (!cid) return;
 
     const updateTree = (items = []) =>
-      items
-        .filter(Boolean)
-        .map((node) => {
-          if (!node?._id) return node;
-          if (node._id === parentReplyId) {
-            const child = Array.isArray(node.replies) ? node.replies : [];
-            return { ...node, replies: [...child, newReply].filter(Boolean) };
-          }
-          return { ...node, replies: updateTree(node?.replies || []) };
-        });
+      items.filter(Boolean).map((node) => {
+        if (!node?._id) return node;
+        if (node._id === parentReplyId) {
+          const child = Array.isArray(node.replies) ? node.replies : [];
+          return { ...node, replies: [...child, newReply].filter(Boolean) };
+        }
+        return { ...node, replies: updateTree(node?.replies || []) };
+      });
 
     setReplies((prev) => ({
       ...prev,
@@ -97,12 +95,14 @@ const CommentList = ({ comments, user }) => {
           className="bg-gray-800 p-3 rounded-xl text-white text-sm border border-gray-700"
         >
           <p className="font-semibold text-blue-400 flex items-center gap-2">
-            <img
-              src={cmt.user?.picture || "/default-avatar.png"}
-              alt={cmt.user?.name || "Khách"}
-              className="w-6 h-6 rounded-full"
-            />
-            {cmt.user?.name || "Khách"}
+            {cmt.user?.picture && (
+              <img
+                src={cmt.user.picture}
+                alt={cmt.user.name}
+                className="w-6 h-6 rounded-full"
+              />
+            )}
+            {cmt.user?.name && <span>{cmt.user.name}</span>}
           </p>
 
           <p className="mt-1">{cmt.text}</p>
@@ -137,16 +137,14 @@ const CommentList = ({ comments, user }) => {
           )}
 
           <div className="ml-6 mt-2 space-y-2">
-            {(replies[cmt._id] ?? [])
-              .filter(Boolean)
-              .map((rep) => (
-                <ReplyItem
-                  key={rep?._id || Math.random()}
-                  reply={rep}
-                  user={user}
-                  onReplyAdded={handleReplyAdded}
-                />
-              ))}
+            {(replies[cmt._id] ?? []).filter(Boolean).map((rep) => (
+              <ReplyItem
+                key={rep?._id || Math.random()}
+                reply={rep}
+                user={user}
+                onReplyAdded={handleReplyAdded}
+              />
+            ))}
           </div>
         </div>
       ))}

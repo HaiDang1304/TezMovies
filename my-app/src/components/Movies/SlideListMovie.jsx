@@ -6,7 +6,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import Image from "../Others/Image";
 import { Link } from "react-router-dom";
-import { getIdLinkm3u8 } from "../../utils/getIdLinkm3u8";
+import { getIdLinkm3u8 } from "../../../../backend/utils/getIdLinkm3u8";
 
 const SlideListMovie = () => {
   const [movies, setMovies] = useState();

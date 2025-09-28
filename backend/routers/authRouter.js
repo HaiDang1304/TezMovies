@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 // Import transporter từ config
 import transporter from "../config/emailConfig.js";
 
@@ -27,6 +28,7 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      picture:  `${process.env.FRONTEND_URL}/avatar/avatar-default-register.jpg`,
       verificationToken,
       isVerified: false,
     });
