@@ -1,80 +1,120 @@
-import React, { useState } from "react";
-import axios from "axios";
+// ReplyItem.js
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const ReplyItem = ({ reply, user, onReplyAdded }) => {
-  const [replying, setReplying] = useState(false);
-  const [text, setText] = useState("");
-
-  // ✅ Nếu reply rỗng => khỏi render
-  if (!reply || typeof reply !== "object") return null;
-
-  const author = reply?.user ?? {};
-  const parentUser = reply?.parentUser ?? null;
-  const children = Array.isArray(reply?.replies) ? reply.replies.filter(Boolean) : [];
+const ReplyItem = ({ reply, user, onReplyAdded, level = 0 }) => {
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replyText, setReplyText] = useState('');
 
   const handleReply = async () => {
-    if (!text.trim()) return;
+    if (!replyText.trim() || !user) {
+      alert('Vui lòng đăng nhập và nhập nội dung');
+      return;
+    }
+
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/replies",
-        { commentId: reply?.commentId, parentReplyId: reply?._id, text },
-        { withCredentials: true }
-      );
-      onReplyAdded?.(reply?._id, res.data.reply);
-      setText("");
-      setReplying(false);
-    } catch (err) {
-      console.error("Error posting nested reply:", err);
+      const response = await axios.post('/api/replies', { // ✅ Dùng relative URL
+        commentId: reply.commentId,
+        parentReplyId: reply._id,
+        text: replyText.trim()
+      }, {
+        withCredentials: true
+      });
+
+      if (response.data.status) {
+        console.log('✅ Nested reply added');
+        onReplyAdded(reply._id, response.data.reply);
+        setReplyText('');
+        setShowReplyForm(false);
+      }
+    } catch (error) {
+      console.error('❌ Error adding nested reply:', error);
+      alert(error.response?.data?.msg || 'Lỗi khi gửi phản hồi');
     }
   };
 
   return (
-    <div className="ml-6 mt-2 bg-gray-700 p-2 rounded">
-      <p className="font-semibold text-green-400 flex items-center gap-2">
-        <img
-          src={author?.picture || "/default-avatar.png"}
-          alt={author?.name || "Ẩn danh"}
-          className="w-5 h-5 rounded-full"
+    <div className={`${level > 2 ? 'ml-2' : 'ml-4'} border-l-2 border-gray-600 pl-3 py-2`}>
+      <div className="flex items-start gap-2">
+        <img 
+          src={reply.user?.picture || '/default-avatar.png'} 
+          alt={reply.user?.name || 'User'}
+          className="w-6 h-6 rounded-full flex-shrink-0"
+          onError={(e) => {
+            e.target.src = "/default-avatar.png";
+          }}
         />
-        {author?.name || "Ẩn danh"}
-      </p>
+        <div className="flex-1 min-w-0">
+          <div className="bg-gray-700 rounded-lg p-2">
+            <p className="font-medium text-blue-300 text-xs mb-1">
+              {reply.user?.name || 'User'}
+              {reply.parentUser && (
+                <span className="text-gray-400">
+                  {' → '}{reply.parentUser.name}
+                </span>
+              )}
+            </p>
+            <p className="text-white text-sm">{reply.text}</p>
+            <small className="text-gray-400 text-xs">
+              {new Date(reply.createdAt).toLocaleString('vi-VN')}
+            </small>
+          </div>
+          
+          {user && level < 3 && (
+            <button
+              onClick={() => setShowReplyForm(!showReplyForm)}
+              className="text-xs text-yellow-400 hover:text-yellow-300 mt-1"
+            >
+              {showReplyForm ? 'Hủy' : 'Trả lời'}
+            </button>
+          )}
 
-      {parentUser?.name && (
-        <p className="text-sm text-gray-400">
-          Trả lời <span className="text-blue-400">@{parentUser.name}</span>
-        </p>
-      )}
+          {showReplyForm && (
+            <div className="mt-2">
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                className="w-full p-2 text-sm bg-gray-600 text-white rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={`Trả lời ${reply.user?.name || 'user'}...`}
+                rows="2"
+              />
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={handleReply}
+                  disabled={!replyText.trim()}
+                  className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Gửi
+                </button>
+                <button
+                  onClick={() => {
+                    setShowReplyForm(false);
+                    setReplyText('');
+                  }}
+                  className="text-xs text-gray-400 hover:text-white"
+                >
+                  Hủy
+                </button>
+              </div>
+            </div>
+          )}
 
-      <p>{reply?.text}</p>
-
-      {user && (
-        <button className="text-xs text-yellow-400 mt-1" onClick={() => setReplying(!replying)}>
-          Trả lời
-        </button>
-      )}
-
-      {replying && (
-        <div className="mt-1">
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="w-full p-1 rounded bg-gray-600 text-white text-sm"
-            placeholder="Viết phản hồi..."
-          />
-          <button onClick={handleReply} className="text-xs text-white bg-blue-600 px-2 py-1 rounded mt-1">
-            Gửi
-          </button>
+          {/* Nested replies */}
+          {Array.isArray(reply.replies) && reply.replies.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {reply.replies.map((nestedReply) => (
+                <ReplyItem
+                  key={nestedReply._id}
+                  reply={nestedReply}
+                  user={user}
+                  onReplyAdded={onReplyAdded}
+                  level={level + 1}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
-
-      {children.map((child) => (
-        <ReplyItem
-          key={child?._id || Math.random()}
-          reply={child}
-          user={user}
-          onReplyAdded={onReplyAdded}
-        />
-      ))}
+      </div>
     </div>
   );
 };

@@ -17,7 +17,6 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
       ...prev,
       [name]: value
     }));
-    // Xóa lỗi khi user bắt đầu nhập
     if (error) setError('');
   };
 
@@ -67,18 +66,28 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
       }
 
       if (response.ok) {
-        // Đăng nhập thành công
+        // // Đăng nhập thành công
+        // console.log('✅ Login successful:', data);
+        
+        // // Refresh trang để cập nhật auth state
+        // window.location.reload();
+        
+        // // Hoặc có thể gọi callback để update state
+        // // onLoginSuccess(data.user);
+        
+        // onClose();
+        
+        // // Reset form
+        // setFormData({ email: '', password: '' });
+
         console.log('✅ Login successful:', data);
-        
-        // Refresh trang để cập nhật auth state
+        if(data.token){
+          // Lưu token vào local
+          localStorage.setItem("token", data.token);
+
+        }
         window.location.reload();
-        
-        // Hoặc có thể gọi callback để update state
-        // onLoginSuccess(data.user);
-        
         onClose();
-        
-        // Reset form
         setFormData({ email: '', password: '' });
       } else {
         // Hiển thị lỗi từ server

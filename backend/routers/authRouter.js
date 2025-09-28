@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 // Import transporter từ config
 import transporter from "../config/emailConfig.js";
 
@@ -32,7 +33,6 @@ router.post("/register", async (req, res) => {
 
     // URL xác thực
     const verifyURL = `${process.env.FRONTEND_URL}/verify/${verificationToken}`;
-
 
     // Gửi email xác thực
     await transporter.sendMail({
@@ -92,10 +92,9 @@ router.get("/verify/:token", async (req, res) => {
     const user = await User.findOne({ verificationToken: token });
 
     if (!user) {
-
-      return res.json({ 
-        message: "Xác thực thành công! Tài khoản đã được kích hoạt.",
-        user: { name: "User", email: "verified" }
+      return res.status(400).json({ 
+        message: "Token xác thực không hợp lệ hoặc đã hết hạn.",
+        error: "INVALID_TOKEN"
       });
     }
 
@@ -117,6 +116,7 @@ router.get("/verify/:token", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("🔑 Login attempt for:", email);
     
     // Tìm user theo email
     const user = await User.findOne({ email });
@@ -145,6 +145,9 @@ router.post("/login", async (req, res) => {
       email: user.email,
       picture: user.picture
     };
+
+    console.log("🔑 User logged in - Session created:", req.session.id);
+    console.log("👤 User data in session:", req.session.user);
     
     res.json({ 
       message: "Đăng nhập thành công", 
@@ -155,10 +158,31 @@ router.post("/login", async (req, res) => {
         picture: user.picture
       }
     });
+
   } catch (err) {
     console.error("❌ Login error:", err);
     res.status(500).json({ message: "Lỗi server khi đăng nhập" });
   }
+});
+
+// Route logout
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Không thể đăng xuất" });
+    }
+    res.clearCookie('connect.sid'); // Xóa session cookie
+    res.json({ message: "Đăng xuất thành công" });
+  });
+});
+
+// Route test (để debug)
+router.get("/test", (req, res) => {
+  res.json({ 
+    message: "Auth routes working!", 
+    timestamp: new Date().toISOString(),
+    routes: ["POST /register", "GET /verify/:token", "POST /login", "POST /logout"]
+  });
 });
 
 export default router;
