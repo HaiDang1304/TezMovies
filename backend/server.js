@@ -14,8 +14,6 @@ import authRouter from "./routers/authRouter.js";
 import transporter from "./config/emailConfig.js";
 import { uploadAvatar } from "./utils/uploadAvatar.js";
 
-
-
 // --- Load đúng file env ---
 const envFile =
   process.env.NODE_ENV === "production" ? ".env.production" : ".env";
@@ -33,12 +31,23 @@ const FRONTEND_URL = isProduction
   : "http://localhost:5173";
 
 // --- Callback URL cho Google OAuth ---
+// Debug môi trường và callback URL
+console.log("🔹 NODE_ENV:", process.env.NODE_ENV);
+console.log("🔹 isProduction:", process.env.NODE_ENV === "production");
+console.log("🔹 FRONTEND_URL:", process.env.FRONTEND_URL);
+console.log("🔹 GOOGLE_APP_CALLBACK_DEV:", process.env.GOOGLE_APP_CALLBACK_DEV);
+console.log(
+  "🔹 GOOGLE_APP_CALLBACK_PROD:",
+  process.env.GOOGLE_APP_CALLBACK_PROD
+);
+
+// Kiểm tra getCallbackURL
 const getCallbackURL = () =>
-  isProduction
+  process.env.NODE_ENV === "production"
     ? process.env.GOOGLE_APP_CALLBACK_PROD
     : process.env.GOOGLE_APP_CALLBACK_DEV;
 
-// Xóa cấu hình nodemailer cũ ở đây - đã chuyển sang emailConfig.js
+console.log("🔹 Callback URL used for Google OAuth:", getCallbackURL());
 
 // Serve static folder /avatars
 app.use("/avatars", express.static("public/avatars"));
@@ -101,7 +110,10 @@ passport.use(
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
           // Upload avatar Google lên Cloudinary
-          const avatarUrl = await uploadAvatar(profile.photos[0].value, profile.id);
+          const avatarUrl = await uploadAvatar(
+            profile.photos[0].value,
+            profile.id
+          );
 
           user = await User.create({
             googleId: profile.id,
@@ -120,7 +132,6 @@ passport.use(
     }
   )
 );
-
 
 passport.serializeUser((user, done) => done(null, user._id));
 passport.deserializeUser(async (id, done) => {
@@ -166,10 +177,11 @@ app.get(
 app.get("/api/user", (req, res) => {
   console.log("🔍 /api/user called | Session:", req.sessionID);
   console.log("🔍 Session data:", req.session);
-  
+
   if (req.session && req.session.user) {
     res.json({ user: req.session.user });
-  } else if (req.user) { // Fallback cho Google OAuth
+  } else if (req.user) {
+    // Fallback cho Google OAuth
     res.json({ user: req.user });
   } else {
     res.status(401).json({ message: "Unauthorized", sessionID: req.sessionID });
