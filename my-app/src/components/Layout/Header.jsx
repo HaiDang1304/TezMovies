@@ -9,15 +9,36 @@ import {
 import ModalSearch from "../Others/ModalSeacrch";
 import DropdownList from "../Categories/DropdownList";
 import DropdownCategory from "../Categories/DropdownCategory";
+import UserMenu from "./UserMenu";
+import { useRef } from "react";
 
 const Header = ({ onLoginClick, onRegisterClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const toggleUserMenu = () => {
+    setUserMenuOpen(!userMenuOpen);
+  };
+  const menuRef = useRef(null);
 
   useEffect(() => {
     fetchUser();
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside); // cho mobile
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []); // Chỉ chạy một lần khi component mount
 
   const fetchUser = async () => {
@@ -123,29 +144,84 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
           </div>
         ) : (
           <div className="hidden md:flex items-center space-x-3">
-            <img
-              src={user?.picture || "/default-avatar.avif"} 
-              referrerPolicy="no-referrer"
-              alt={user?.name || "User avatar"}
-              className="w-10 h-10 rounded-full border"
-            />
+            <div className="">
+              <div className="relative">
+                <img
+                src={user?.picture || "/default-avatar.avif"}
+                referrerPolicy="no-referrer"
+                alt={user?.name || "User avatar"}
+                className="w-10 h-10 rounded-full border cursor-pointer"
+                onClick={toggleUserMenu}
+              />
+              <span class="top-0 left-7 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+              </div>
+              {userMenuOpen && (
+                <div ref={menuRef}>
+                  <UserMenu
+                    user={user}
+                    onLogout={handleLogout}
+                    onClose={() => setUserMenuOpen(false)} // phải là hàm
+                  />
+                </div>
+              )}
+            </div>
+
             <span>{user.name || "Unknown User"}</span>
-            <button
+            {/* <button
               onClick={handleLogout}
               className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
             >
               Đăng xuất
-            </button>
+            </button> */}
           </div>
         )}
         <div className="md:hidden flex flex-row gap-4">
-          {user && (
-            <img
-              src={user.picture || "/default-avatar.avif"}
-              referrerPolicy="no-referrer"
-              alt={user.name || "User avatar"}
-              className="w-10 h-10 rounded-full border"
-            />
+          {!user ? (
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  onLoginClick();
+                  setMenuOpen(false);
+                }}
+                className="w-full px-4 py-2 rounded-xl text-black hover:opacity-90"
+                style={{
+                  background: "linear-gradient(39deg, #fecf59, #fff1cc)",
+                }}
+              >
+                <div className="text-black font-stretch-110% text-sm">Đăng nhập</div>
+              </button>
+              {/* <button
+                onClick={() => {
+                  onRegisterClick();
+                  setMenuOpen(false);
+                }}
+                className="w-full bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Đăng Ký
+              </button> */}
+            </div>
+          ) : (
+            <div className="">
+              <div className="relative">
+                <img
+                src={user.picture || "/default-avatar.avif"}
+                referrerPolicy="no-referrer"
+                alt={user.name || "User avatar"}
+                className="w-10 h-10 rounded-full border cursor-pointer"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+              />
+              <span class="top-0 left-7 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+              </div>
+              {userMenuOpen && (
+                <div ref={menuRef}>
+                  <UserMenu
+                    user={user}
+                    onLogout={handleLogout}
+                    onClose={() => setUserMenuOpen(false)}
+                  />
+                </div>
+              )}
+            </div>
           )}
           <button
             className="md:hidden text-white text-xl"
@@ -196,38 +272,6 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             <DropdownCategory onClick={() => setMenuOpen(false)} />
             <DropdownList onClick={() => setMenuOpen(false)} />
           </nav>
-
-          {!user ? (
-            <div className="flex space-x-3 mt-3">
-              <button
-                onClick={() => {
-                  onLoginClick();
-                  setMenuOpen(false);
-                }}
-                className="w-full bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
-              >
-                Đăng Nhập
-              </button>
-              <button
-                onClick={() => {
-                  onRegisterClick();
-                  setMenuOpen(false);
-                }}
-                className="w-full bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Đăng Ký
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center space-y-2 mt-3">
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 w-full"
-              >
-                Đăng xuất
-              </button>
-            </div>
-          )}
         </div>
       )}
     </header>
