@@ -12,6 +12,9 @@ import replyRouter from "./routers/replyRouter.js";
 import authRouter from "./routers/authRouter.js";
 // Import transporter từ config
 import transporter from "./config/emailConfig.js";
+import { uploadAvatar } from "./utils/uploadAvatar.js";
+
+
 
 // --- Load đúng file env ---
 const envFile =
@@ -97,11 +100,14 @@ passport.use(
       try {
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
+          // Upload avatar Google lên Cloudinary
+          const avatarUrl = await uploadAvatar(profile.photos[0].value, profile.id);
+
           user = await User.create({
             googleId: profile.id,
             email: profile.emails[0].value,
             name: profile.displayName,
-            picture: profile.photos[0].value,
+            picture: avatarUrl, // Lưu URL Cloudinary thay vì Google URL
           });
           console.log("✅ User created:", user.email);
         } else {
@@ -114,6 +120,7 @@ passport.use(
     }
   )
 );
+
 
 passport.serializeUser((user, done) => done(null, user._id));
 passport.deserializeUser(async (id, done) => {
