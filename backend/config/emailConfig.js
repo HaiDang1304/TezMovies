@@ -3,14 +3,19 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Tạo transporter duy nhất
+// Lấy biến môi trường, fallback để debug local
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
+const SMTP_USER = process.env.EMAIL_USER;
+const SMTP_PASS = process.env.EMAIL_PASS;
+
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // true cho 465, false cho 587
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_PORT === 465, // true cho 465, false cho 587
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // App password không có khoảng trắng
+    user: SMTP_USER,
+    pass: SMTP_PASS,
   },
   tls: {
     rejectUnauthorized: false,
@@ -21,9 +26,11 @@ const transporter = nodemailer.createTransport({
 transporter.verify((error, success) => {
   if (error) {
     console.error("❌ SMTP Verification Error:", error);
+    console.log("🔹 SMTP_HOST:", SMTP_HOST);
+    console.log("🔹 SMTP_PORT:", SMTP_PORT);
   } else {
     console.log("✅ SMTP Server is ready");
-    console.log("📧 Email User:", process.env.EMAIL_USER);
+    console.log("📧 Email User:", SMTP_USER);
   }
 });
 
