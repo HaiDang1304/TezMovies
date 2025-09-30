@@ -25,6 +25,14 @@ import SearchPage from "./pages/SearchPage";
 import TopicPages from "./pages/TopicPages";
 import VerifyPage from "./pages/VerifyPage";
 
+
+import AccountLayout from "./pages/Account/AccountLayout";
+import Profile from "./pages/Account/Profile";
+// import Favorites from "./pages/Account/Favorites";
+// import Lists from "./pages/Account/Lists";
+// import WatchLater from "./pages/Account/WatchLater";
+// import Notifications from "./pages/Account/Notifications";
+
 const GOOGLE_CLIENT_ID =
   "685737935777-maqlvjhft09oistl0e1jdm54m1m02fee.apps.googleusercontent.com";
 
@@ -168,6 +176,15 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
 
           <Route path="/chu-de" element={<TopicPages />} />
+
+          {/* Layout con: Quản lý tài khoản */}
+          <Route path="account" element={<AccountLayout />}>
+            {/* <Route path="favorites" element={<Favorites />} />
+            <Route path="lists" element={<Lists />} />
+            <Route path="watch-later" element={<WatchLater />} />
+            <Route path="notifications" element={<Notifications />} /> */}
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
       </Routes>
     </Router>

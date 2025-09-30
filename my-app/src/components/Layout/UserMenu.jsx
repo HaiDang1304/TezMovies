@@ -82,7 +82,7 @@ const UserMenu = ({ user, onLogout, onClose }) => {
             <div className="text-sm font-extralight">Xem tiếp</div>
           </div>
         </Link>
-        <Link to="/account" className="block hover:text-yellow-400">
+        <Link to="account/profile" className="block hover:text-yellow-400">
           <div className="flex items-center p-2 gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
