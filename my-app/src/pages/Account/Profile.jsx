@@ -1,22 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UserAvatar from "../../components/Others/UserAvatar"; // đường dẫn tuỳ dự án
 import useUser from "../../utils/useUser.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTh } from "@fortawesome/free-solid-svg-icons";
 
+
 export default function Profile() {
   const { user, loading } = useUser();
 
-  const handleLogout = async () => {
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState("other");
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setGender(user.gender || "other");
+    }
+  },[user]);
+
+  const handleUpdate = async () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     try {
-      const res = await fetch(`${API_URL}/auth/logout`, {
-        method: "POST",
+      const res = await fetch(`${API_URL}/api/user/profile`, {
+        method: "PUT",
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, gender }),
       });
-      if (res.ok) window.location.href = "/";
+      if (res.ok) {
+        alert("Cập nhật thành công!");
+      } else {
+        const data = await res.json();
+        alert("Lỗi: " + data.message);
+      }
     } catch (err) {
       console.error(err);
+      alert("Lỗi kết nối server");
     }
   };
 
@@ -68,7 +87,8 @@ export default function Profile() {
             </label>
             <input
               type="text"
-              defaultValue={user.name || ""}
+              onChange={(e) => setName(e.target.value)}
+              value={name}
               className="w-full p-3 rounded-lg  border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -87,9 +107,8 @@ export default function Profile() {
                     type="radio"
                     name="gender"
                     value={g}
-                    defaultChecked={
-                      g === user.gender || (!user.gender && g === "other")
-                    }
+                    checked={gender === g} 
+                    onChange={() => setGender(g)}
                     className="cursor-pointer"
                   />
                   {g === "male" ? "Nam" : g === "female" ? "Nữ" : "Khác"}
@@ -100,6 +119,7 @@ export default function Profile() {
 
           <button
             type="button"
+            onClick={handleUpdate}
             className="w-full px-4 py-2 rounded-xl text-black hover:opacity-90"
             style={{
               background: "linear-gradient(39deg, #fecf59, #fff1cc)",
@@ -112,13 +132,13 @@ export default function Profile() {
           <div className="max-w-[120px] flex flex-col items-center text-center">
             <UserAvatar user={user} size={64} />
             <div className="mt-8 flex items-center gap-1">
-             <div className="flex gap-1 ">
-               <FontAwesomeIcon
-                icon={faTh}
-                className="text-xl text-white mb-1"
-              />
-              <p className="text-sm font-extralight">Ảnh có sẵn</p>
-             </div>
+              <div className="flex gap-1 ">
+                <FontAwesomeIcon
+                  icon={faTh}
+                  className="text-xl text-white mb-1"
+                />
+                <p className="text-sm font-extralight">Ảnh có sẵn</p>
+              </div>
             </div>
           </div>
         </div>
