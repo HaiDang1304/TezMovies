@@ -10,6 +10,7 @@ import User from "./models/User.js";
 import commentRouter from "./routers/commentRouters.js";
 import replyRouter from "./routers/replyRouter.js";
 import authRouter from "./routers/authRouter.js";
+import getUserRoutes from "./routers/getUser.js"
 // Import transporter từ config
 import transporter from "./config/emailConfig.js";
 import { uploadAvatar } from "./utils/uploadAvatar.js";
@@ -31,15 +32,6 @@ const FRONTEND_URL = isProduction
   : "http://localhost:5173";
 
 // --- Callback URL cho Google OAuth ---
-// Debug môi trường và callback URL
-console.log("🔹 NODE_ENV:", process.env.NODE_ENV);
-console.log("🔹 isProduction:", process.env.NODE_ENV === "production");
-console.log("🔹 FRONTEND_URL:", process.env.FRONTEND_URL);
-console.log("🔹 GOOGLE_APP_CALLBACK_DEV:", process.env.GOOGLE_APP_CALLBACK_DEV);
-console.log(
-  "🔹 GOOGLE_APP_CALLBACK_PROD:",
-  process.env.GOOGLE_APP_CALLBACK_PROD
-);
 
 // Kiểm tra getCallbackURL
 const getCallbackURL = () =>
@@ -220,8 +212,8 @@ app.get("/", (req, res) => {
 app.use("/api/comments", commentRouter);
 app.use("/api/replies", replyRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/user", getUserRoutes);
 
-// --- Connect DB + Start Server ---
 connectDB();
 app.listen(PORT, () =>
   console.log(
