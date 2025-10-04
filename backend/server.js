@@ -239,6 +239,7 @@ import replyRouter from "./routers/replyRouter.js";
 import authRouter from "./routers/authRouter.js";
 import getUserRoutes from "./routers/getUser.js";
 import { uploadAvatar } from "./utils/uploadAvatar.js";
+import { isAuthenticated } from "./middleware/auth.js";
 
 // --- Load ENV ---
 const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";

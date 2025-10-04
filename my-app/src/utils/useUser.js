@@ -29,5 +29,5 @@ export default function useUser() {
     fetchUser();
   }, [API_URL]);
 
-  return { user, loading };
+  return { user, setUser, loading }; 
 }

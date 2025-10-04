@@ -1,41 +1,46 @@
-import React, { useEffect, useState } from "react";
-import UserAvatar from "../../components/Others/UserAvatar"; // đường dẫn tuỳ dự án
+import React, { useEffect, useState, useContext } from "react";
+import UserAvatar from "../../components/Others/UserAvatar";
 import useUser from "../../utils/useUser.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTh } from "@fortawesome/free-solid-svg-icons";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { UserContext } from "../../context/UserContext.jsx";
 
 export default function Profile() {
-  const { user, loading } = useUser();
-
   const [name, setName] = useState("");
   const [gender, setGender] = useState("other");
+  const { user, setUser, loading } = useContext(UserContext);
 
+  // Load dữ liệu user vào form khi user thay đổi
   useEffect(() => {
     if (user) {
       setName(user.name || "");
       setGender(user.gender || "other");
     }
-  },[user]);
+  }, [user]);
 
   const handleUpdate = async () => {
-    const API_URL = import.meta.env.VITE_API_URL;
     try {
-      const res = await fetch(`${API_URL}/api/user/profile`, {
+      const response = await fetch("http://localhost:3000/api/user/profile", {
         method: "PUT",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // gửi cookie
         body: JSON.stringify({ name, gender }),
       });
-      if (res.ok) {
-        alert("Cập nhật thành công!");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Cập nhật thành công!");
+        // window.location.reload();
+        setUser(data.user);
       } else {
-        const data = await res.json();
-        alert("Lỗi: " + data.message);
+        toast.error(data.message || "Cập nhật thất bại!");
       }
     } catch (err) {
-      console.error(err);
-      alert("Lỗi kết nối server");
+      console.error("Update error:", err);
+      toast.error("Lỗi server, vui lòng thử lại!");
     }
   };
 
@@ -62,13 +67,13 @@ export default function Profile() {
   }
 
   return (
-    <div className="p-2 min-w-full ">
+    <div className="p-2 min-w-full">
       <div className="text-lg font-medium py-2">Thông tin tài khoản</div>
-      <div className=" text-sm font-sans text-gray-500 py-2">
+      <div className="text-sm font-sans text-gray-500 py-2">
         Cập nhật thông tin tài khoản
       </div>
       <div className="flex gap-14">
-        <form className="space-y-8 min-w-md ">
+        <form className="space-y-8 min-w-md">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-300">
               Email
@@ -89,7 +94,7 @@ export default function Profile() {
               type="text"
               onChange={(e) => setName(e.target.value)}
               value={name}
-              className="w-full p-3 rounded-lg  border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 rounded-lg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -107,7 +112,7 @@ export default function Profile() {
                     type="radio"
                     name="gender"
                     value={g}
-                    checked={gender === g} 
+                    checked={gender === g}
                     onChange={() => setGender(g)}
                     className="cursor-pointer"
                   />
@@ -128,11 +133,12 @@ export default function Profile() {
             Cập nhật
           </button>
         </form>
+
         <div className="py-6 w-full">
           <div className="max-w-[120px] flex flex-col items-center text-center">
             <UserAvatar user={user} size={64} />
             <div className="mt-8 flex items-center gap-1">
-              <div className="flex gap-1 ">
+              <div className="flex gap-1">
                 <FontAwesomeIcon
                   icon={faTh}
                   className="text-xl text-white mb-1"
@@ -143,6 +149,21 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        toastClassName={() =>
+          "flex items-center gap-2 bg-gray-800 text-white rounded-lg shadow-lg p-3 w-[320px] h-[60px]"
+        }
+        bodyClassName="font-sans text-sm"
+      />
     </div>
   );
 }

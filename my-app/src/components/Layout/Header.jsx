@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,11 +10,13 @@ import ModalSearch from "../Others/ModalSeacrch";
 import DropdownList from "../Categories/DropdownList";
 import DropdownCategory from "../Categories/DropdownCategory";
 import UserMenu from "./UserMenu";
+import { UserContext } from "../../context/UserContext.jsx";
+
 
 const Header = ({ onLoginClick, onRegisterClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, setUser, loading } = useContext(UserContext);
 
   const [desktopUserMenuOpen, setDesktopUserMenuOpen] = useState(false);
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false);
