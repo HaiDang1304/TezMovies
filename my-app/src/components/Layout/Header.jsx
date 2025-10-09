@@ -26,9 +26,9 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  // useEffect(() => {
+  //   fetchUser();
+  // }, []);
 
   // Click ngoài menu desktop
   useEffect(() => {

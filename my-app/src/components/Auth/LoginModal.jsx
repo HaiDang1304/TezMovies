@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import GoogleLoginButton from "./GoogleLoginButton";
+import { UserContext } from "../../context/UserContext";
 
 export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
   const [formData, setFormData] = useState({
@@ -7,6 +8,9 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }) {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  const {setUser} = useContext(UserContext);
+
+
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
